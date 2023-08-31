@@ -1,0 +1,98 @@
+{% extends 'shared/base.html' %}
+{% block title %}股Day-會員資料{% endblock %}
+{% block content %}
+{% load static %}
+
+{% include 'member/member_base.html' %}
+<link href="{% static 'css/member_profile.css' %}" rel="stylesheet" type="text/css" media="all" />
+
+<div class="member_main_member_databydb">
+    <div class="member_main_member_databydb_memberdata_box">
+        <div class="member_modify_btn" onClick="show_member_modify_data()"> <button>修改資料</button></div>
+
+        <div class="member_main_member_databydb_memberdata date">
+            <div>註冊日期：</div>
+            <div class="member_main_member_databydb_memberdata text date"></div>
+            <div>性別：</div>
+            <div class="member_main_member_databydb_memberdata text gender"></div>
+        </div>
+        <div class="member_main_member_databydb_memberdata birthday">
+            <div>生日：</div>
+            <div class="member_main_member_databydb_memberdata text birthday"></div>
+            <div>居住地：</div>
+            <div class="member_main_member_databydb_memberdata text address"></div>
+        </div>
+    </div>
+</div>
+<div class="base_load_gif_member_data">
+    <img src="{% static 'gif/ajax-loader2.gif' %}">
+</div>
+
+
+<!-- 修改會員的表單 -->
+<div id="hidebg" onClick="close_member_modify_data()"></div>
+
+<div class="member_modify_data">
+    <div class="member_modify_data_top"></div>
+    <div class="member_modify_data_top_closebtn" onclick="close_member_modify_data()"><img src="{% static 'img/close_btn.png' %} " /></div>
+
+    <a class="member_modify_data_title">會員資料修改</a>
+    <form action=" " method="post " id="member_modify_data">
+        <div class="member_modify_data__title">
+            <a>會員暱稱：</a>
+            <input class="member_modify_data_name" type="text" placeholder=" 輸入要修改的暱稱 " name="member_modify_name" minlength="1" maxlength="10" required="required" aria-required="true" />
+        </div>
+        <div class="member_modify_data__title">
+            <a>居住地：</a>
+            <select class="member_modify_data_address" name="member_modify_address" required onchange="">
+                <option value=" ">[請選擇居住地]</option>
+                <option value="臺北市">臺北市</option>
+                <option value="新北市">新北市</option>
+                <option value="桃園市">桃園市</option>
+                <option value="臺中市">臺中市</option>
+                <option value="臺南市">臺南市</option>
+                <option value="高雄市">高雄市</option>
+                <option value="宜蘭縣">宜蘭縣</option>
+                <option value="新竹縣">新竹縣</option>
+                <option value="苗栗縣">苗栗縣</option>
+                <option value="彰化縣">彰化縣</option>
+                <option value="南投縣">南投縣</option>
+                <option value="雲林縣">雲林縣</option>
+                <option value="嘉義縣">嘉義縣</option>
+                <option value="屏東縣">屏東縣</option>
+                <option value="花蓮縣">花蓮縣</option>
+                <option value="臺東縣">臺東縣</option>
+                <option value="澎湖縣">澎湖縣</option>
+                <option value="金門縣">金門縣</option>
+                <option value="連江縣">連江縣</option>
+                <option value="基隆市">基隆市</option>
+                <option value="新竹市">新竹市</option>
+                <option value="嘉義市">嘉義市</option>
+                <option value="其他"> 其他 </option>
+            </select>
+        </div>
+        <div class="member_modify_data__title">
+            <a>生日：</a>
+            <input class=" member_modify_data_birthday" id="date" type="date" name="member_modify_birthday" required>
+        </div>
+        <div class="member_modify_data__title_gender">
+            <a>性別：</a>
+            <input class="member_modify_data__title_gender_input1" type="radio" name="member_modify_gender" value="男" required>男
+            <input class="member_modify_data__title_gender_input2" type="radio" name="member_modify_gender" value="女">女
+        </div>
+
+        <div class="member_modify_data__title">
+            <a>興趣</a>
+            <textarea class="member_modify_data__title_textarea1" name="member_modify_interests"></textarea>
+        </div>
+        <div class="member_modify_data__title">
+            <a>自我介紹</a>
+            <textarea class="member_modify_data__title_textarea2" name="member_modify_introduction"></textarea>
+        </div>
+        <input class="member_modify_data_form_btn" type="submit" value="送出修改">
+    </form>
+    <a class="member_modify_data_return_text "></a>
+</div>
+<script src="{% static 'js/member_profile.js' %}"></script>
+
+{% endblock %}

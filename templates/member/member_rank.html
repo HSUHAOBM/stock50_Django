@@ -1,0 +1,171 @@
+{% extends 'shared/base.html' %}
+{% block title %}股Day-會員排行{% endblock %}
+{% block content %}
+{% load static %}
+
+{% include 'member/member_base.html' %}
+<link href="{% static 'css/member_rank.css' %}" rel="stylesheet" type="text/css" media="all" />
+
+<div class=" member_main_member_databydb rank ">
+    <div class="data_not_have ">
+        <img src="{% static 'img/nodata.png' %} " />
+        <div class="data_not_have_text ">
+            <p>目前還沒有預測的資料</p>
+            <p class="data_not_have_text_other">
+                <a>趕快到</a>
+                <a class="data_not_have_text_link " href="/forum ">預測股市</a>
+                <a>，發布預測吧！</a></p>
+        </div>
+    </div>
+
+    <div class="member_rank_box_win ">
+        <a class="member_rank_win_title rate ">勝率</a>
+        <div class="data_not_have rate ">
+            <img src="{% static 'img/nodata.png' %} " />
+            <div class="data_not_have_text ">
+                <p>資料不足</p>
+            </div>
+        </div>
+        <div class="base_load_gif_member_rank rate">
+            <img src="{% static 'gif/ajax-loader2.gif' %}">
+        </div>
+        <div class="member_rank_box rate ">
+            <!-- <div class=" member_rank_box_win_load ">
+                <div class="member_rank_box_win_no ">1</div>
+                <div class="member_rank_box_win_stock ">
+                    <a class="member_rank_box_win_stock_id ">2330</a>
+                    <a class="member_rank_box_win_stock_name ">台積電</a>
+                </div>
+                <div class="member_rank_box_win_text rate ">勝率：100%</div>
+                <div class="member_rank_box_win_text win ">成功：30次</div>
+                <div class="member_rank_box_win_text fail ">失敗：0次</div>
+                <div class="member_rank_box_win_text total ">合計：30次</div>
+            </div> -->
+
+
+
+
+        </div>
+    </div>
+    <div class="member_rank_box_win ">
+        <a class="member_rank_win_title win ">成功</a>
+        <div class="data_not_have win ">
+            <img src="{% static 'img/nodata.png' %} " />
+            <div class="data_not_have_text ">
+                <p>資料不足</p>
+            </div>
+        </div>
+        <div class="base_load_gif_member_rank win">
+            <img src="{% static 'gif/ajax-loader2.gif' %}">
+        </div>
+        <div class="member_rank_box win ">
+            <!-- <div class=" member_rank_box_win_load ">
+                <div class="member_rank_box_win_no ">1</div>
+                <div class="member_rank_box_win_stock ">2330-台積電
+                </div>
+                <div class="member_rank_box_win_text rate ">勝率：100%</div>
+                <div class="member_rank_box_win_text text win ">成功：30次</div>
+                <div class="member_rank_box_win_text fail ">失敗：0次</div>
+                <div class="member_rank_box_win_text total ">合計：30次</div>
+            </div>
+            <div class=" member_rank_box_win_load ">
+                <div class="member_rank_box_win_no ">1</div>
+                <div class="member_rank_box_win_stock ">2330-台積電
+                </div>
+                <div class="member_rank_box_win_text rate ">勝率：100%</div>
+                <div class="member_rank_box_win_text text win ">成功：30次</div>
+                <div class="member_rank_box_win_text fail ">失敗：0次</div>
+                <div class="member_rank_box_win_text total ">合計：30次</div>
+            </div>
+            <div class=" member_rank_box_win_load ">
+                <div class="member_rank_box_win_no ">1</div>
+                <div class="member_rank_box_win_stock ">2330-台積電
+                </div>
+                <div class="member_rank_box_win_text rate ">勝率：100%</div>
+                <div class="member_rank_box_win_text text win ">成功：30次</div>
+                <div class="member_rank_box_win_text fail ">失敗：0次</div>
+                <div class="member_rank_box_win_text total ">合計：30次</div>
+            </div>
+            <div class=" member_rank_box_win_load ">
+                <div class="member_rank_box_win_no ">1</div>
+                <div class="member_rank_box_win_stock ">2330-台積電
+                </div>
+                <div class="member_rank_box_win_text rate ">勝率：100%</div>
+                <div class="member_rank_box_win_text text win ">成功：30次</div>
+                <div class="member_rank_box_win_text fail ">失敗：0次</div>
+                <div class="member_rank_box_win_text total ">合計：30次</div>
+            </div>
+            <div class=" member_rank_box_win_load ">
+                <div class="member_rank_box_win_no ">1</div>
+                <div class="member_rank_box_win_stock ">2330-台積電
+                </div>
+                <div class="member_rank_box_win_text rate ">勝率：100%</div>
+                <div class="member_rank_box_win_text text win ">成功：30次</div>
+                <div class="member_rank_box_win_text fail ">失敗：0次</div>
+                <div class="member_rank_box_win_text total ">合計：30次</div>
+            </div> -->
+        </div>
+    </div>
+    <div class="member_rank_box_win ">
+        <a class="member_rank_win_title fail ">失敗</a>
+        <div class="data_not_have fail ">
+            <img src="{% static 'img/nodata.png' %} " />
+            <div class="data_not_have_text ">
+                <p>資料不足</p>
+            </div>
+        </div>
+        <div class="base_load_gif_member_rank fail">
+            <img src="{% static 'gif/ajax-loader2.gif' %}">
+        </div>
+        <div class="member_rank_box fail ">
+            <!-- <div class=" member_rank_box_win_load ">
+                <div class="member_rank_box_win_no ">1</div>
+                <div class="member_rank_box_win_stock ">2330-台積電
+                </div>
+                <div class="member_rank_box_win_text rate ">勝率：100%</div>
+                <div class="member_rank_box_win_text text win ">成功：30次</div>
+                <div class="member_rank_box_win_text fail ">失敗：0次</div>
+                <div class="member_rank_box_win_text total ">合計：30次</div>
+            </div>
+            <div class=" member_rank_box_win_load ">
+                <div class="member_rank_box_win_no ">1</div>
+                <div class="member_rank_box_win_stock ">2330-台積電
+                </div>
+                <div class="member_rank_box_win_text rate ">勝率：100%</div>
+                <div class="member_rank_box_win_text text win ">成功：30次</div>
+                <div class="member_rank_box_win_text fail ">失敗：0次</div>
+                <div class="member_rank_box_win_text total ">合計：30次</div>
+            </div>
+            <div class=" member_rank_box_win_load ">
+                <div class="member_rank_box_win_no ">1</div>
+                <div class="member_rank_box_win_stock ">2330-台積電
+                </div>
+                <div class="member_rank_box_win_text rate ">勝率：100%</div>
+                <div class="member_rank_box_win_text text win ">成功：30次</div>
+                <div class="member_rank_box_win_text fail ">失敗：0次</div>
+                <div class="member_rank_box_win_text total ">合計：30次</div>
+            </div>
+            <div class=" member_rank_box_win_load ">
+                <div class="member_rank_box_win_no ">1</div>
+                <div class="member_rank_box_win_stock ">2330-台積電
+                </div>
+                <div class="member_rank_box_win_text rate ">勝率：100%</div>
+                <div class="member_rank_box_win_text text win ">成功：30次</div>
+                <div class="member_rank_box_win_text fail ">失敗：0次</div>
+                <div class="member_rank_box_win_text total ">合計：30次</div>
+            </div>
+            <div class=" member_rank_box_win_load ">
+                <div class="member_rank_box_win_no ">1</div>
+                <div class="member_rank_box_win_stock ">2330-台積電
+                </div>
+                <div class="member_rank_box_win_text rate ">勝率：100%</div>
+                <div class="member_rank_box_win_text text win ">成功：30次</div>
+                <div class="member_rank_box_win_text fail ">失敗：0次</div>
+                <div class="member_rank_box_win_text total ">合計：30次</div>
+            </div> -->
+        </div>
+    </div>
+</div>
+</div>
+<script src="{% static 'js/member_rank.js' %}"></script>
+{% endblock %}

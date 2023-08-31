@@ -1,0 +1,183 @@
+                .index {
+                    font-family: 'HanHei TC', 'PingFang TC', 'Helvetica Neue', 'Helvetica', 'STHeitiTC-Light', 'Arial', sans-serif;
+                    background-color: rgb(236, 236, 236);
+                    padding-bottom: 100px;
+                    font-family: Comic Sans MS;
+                }
+                
+                .index_main {
+                    margin: 0 auto;
+                    width: 1200px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    align-content: center;
+                }
+                
+                .index_main_slogan {
+                    font-weight: bold;
+                    text-align: center;
+                    padding: 0;
+                    margin: 0;
+                }
+                
+                .index_main_slogan.top {
+                    text-shadow: #8595b0 0.1em 0.1em 0.2em;
+                    font-size: 3em;
+                    padding-top: 35px;
+                    margin-bottom: 20px;
+                    letter-spacing: 2px;
+                }
+                
+                .index_main_slogan.end {
+                    text-shadow: #8595b0 0.1em 0.1em 0.2em;
+                    font-size: 2.4em;
+                    letter-spacing: 1px;
+                }
+                
+                .index_main_slogan_a1 {
+                    text-shadow: #a5b2c7 0.1em 0.1em 0.2em;
+                    font-size: 1.5em;
+                    font-weight: bold;
+                    margin: 10px;
+                }
+                
+                .strat_join_member {
+                    font-size: 45px;
+                    margin: 25px;
+                }
+                
+                .strat_join_member>a {
+                    text-shadow: #a5b2c7 0.1em 0.1em 0.2em;
+                    color: #000;
+                    FONT-WEIGHT: 700;
+                }
+                
+                .strat_join_member>a:hover {
+                    text-shadow: #4471ba 0.1em 0.1em 0.2em;
+                    color: #000;
+                    FONT-WEIGHT: 900;
+                }
+                
+                .index_main_slogan_img {
+                    margin: 20px 0 40px 0;
+                }
+                
+                .index_main_slogan_a {
+                    display: flex;
+                    justify-content: flex-end;
+                    width: 100%;
+                    margin-top: 60px;
+                }
+                
+                .index_main_slogan_a a {
+                    font-size: 1.2em;
+                    font-weight: bold;
+                    color: #9c9c9c;
+                }
+                
+                hr {
+                    width: 100%;
+                    background-color: transparent !important;
+                    border-bottom: 2px #313131 dashed;
+                    border-width: 2px 0 0 0;
+                    border-style: solid;
+                    border-color: #313131;
+                }
+                
+                .index_main_introduce_title {
+                    /* margin-top: 30px; */
+                    text-align: center;
+                    text-shadow: #a5b2c7 0.1em 0.1em 0.2em;
+                    font-size: 2.7em;
+                    font-weight: bold;
+                    /* margin: 8px 0px; */
+                    margin-bottom: 15px;
+                    width: 100%;
+                    margin-top: 50px;
+                    /* border-bottom: 2px #adacac double; */
+                }
+                
+                .index_main_introduce {
+                    width: 100%;
+                    margin: 7% 0;
+                }
+                
+                .index_main_introduce>img {
+                    box-shadow: 1px 1px 10px 1px;
+                    border-radius: 10px;
+                    width: 100%;
+                }
+                
+                .index_main_introduce_text {
+                    text-shadow: #a5b2c7 0.1em 0.1em 0.2em;
+                    font-size: 2.1em;
+                    font-weight: bold;
+                    /* margin: 8px 0px; */
+                    margin-bottom: 15px;
+                    width: 100%;
+                    margin-top: 20px;
+                    border-bottom: 2px #adacac double;
+                }
+                
+                .predtict_result_box {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-evenly;
+                    align-content: center;
+                    flex-direction: row;
+                }
+                
+                .img_predtict_win_img1 {
+                    width: 75%;
+                    box-shadow: 1px 1px 10px 1px;
+                }
+                
+                .img_predtict_win_img2 {
+                    width: 85px;
+                }
+                
+                .predtict_result_box_text {
+                    font-size: 2.2em;
+                    font-weight: bold;
+                }
+                
+                @media screen and (min-width: 500px) and (max-width: 1200px) {
+                    .index_main {
+                        width: 95%;
+                    }
+                }
+                
+                @media screen and (max-width: 500px) {
+                    .index_main {
+                        width: 95%;
+                        margin: 0 auto7;
+                    }
+                    .predtict_result_box_text {
+                        font-size: 1em;
+                        font-weight: bold;
+                    }
+                    .img_predtict_win_img2 {
+                        width: 20px;
+                    }
+                    .index_main_slogan.end {
+                        font-size: 1.4em;
+                    }
+                    .index_main_slogan.top {
+                        font-size: 2em;
+                    }
+                    .index_main_slogan_a1 {
+                        font-size: 13px;
+                    }
+                    .strat_join_member {
+                        font-size: 35px;
+                        margin: 25px;
+                    }
+                    .index_main_introduce_title {
+                        font-size: 2em;
+                    }
+                    .index_main_introduce_text {
+                        font-size: 0.8em;
+                    }
+                }

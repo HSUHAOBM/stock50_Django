@@ -1,0 +1,126 @@
+{% extends 'shared/base.html' %}
+{% block title %}股Day-會員註冊{% endblock %}
+{% block content %}
+{% load static %}
+<link href="{% static 'css/member_register.css' %}" rel="stylesheet" type="text/css" media="all" />
+<div class="member">
+    <a class="member_title">免費加入</a>
+    <div class="member_body">
+
+        <div class="member_left">
+            <p class="member_left_title">會員須知</p>
+            <p class="member_left_text">遵守討論區社群規範，為維護社群討論區品質，保障討論區內使用者權益，站方制定相關「討論區社群規範」， 平台的股市討論區，將透過「站方管理巡查」等機制綜合判斷，針對違反下列規範之帳號、文字、假訊息及其他任何形式的內容進行移除動作，並視違規嚴重程度予以相對應的懲處，包含刪除留言、禁止相關服務、最重至帳號停權。相關細則請至討論區社群規範細則閱讀。
+            </p>
+            <p class="member_left_text"></p>(註：可依違規嚴重程度斟酌調整懲處內容)</p>
+            <p class="member_left_text">本網站所供的所有數據、資料以及相關的服務皆為輔助會員判斷股市之工具僅供參考，請勿以此作為真實買賣交易之依據。投資人若依此以為買賣之依據，皆須自負盈虧之責任。本站不負任何法律責任。</p>
+            <p class="member_left_text">資料來源<a href="http://www.tse.com.tw/ " target="_blank " rel="noreferrer noopener ">台灣證券交易所</a>、<a href="http://www.tpex.org.tw/ " target="_blank " rel="noreferrer noopener ">櫃檯買賣中心</a>。資料僅供參考，使用者依本資料交易發生交易損失需自行負責，本站對資訊正確、更新延誤或傳輸中斷不負任何責任。</p>
+        </div>
+        <div class="member_register ">
+            <div class="member_register_form out"> <a class="member_title register">使用信箱快速註冊</a>
+                <form action="" method="post" id="member_form">
+                    <div class="member_register_form">
+                        <div class="member_register_inputbox"> <label>輸入Email作為您的帳號</label>
+                            <div><input class="member_register_input email" required=" required " maxlength="48" aria-required="true" placeholder="輸入Email作為您的帳號 " type="email" value=" " pattern="^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})*$" /></div>
+                        </div>
+                        <div class="member_register_inputbox"><label>密碼：6至12個字元</label>
+                            <div><input class="member_register_input password1" required="required " minlength="6" maxlength="12" aria-required="true" placeholder="密碼：6至12個字元" type="password" pattern="[0-9a-zA-Z]{6,12}" /></div>
+                        </div>
+                        <div class="member_register_inputbox"><label>請再輸入一次密碼</label>
+                            <div><input class="member_register_input password2" required="required " minlength="6" maxlength="12" aria-required="true" placeholder="請再輸入一次密碼 " type="password" pattern="[0-9a-zA-Z]{6,12}" /></div>
+                        </div>
+                        <div class="member_register_inputbox"><label>使用者暱稱</label>
+                            <div><input class="member_register_input username" required="required " minlength="1" maxlength="10" aria-required="true" placeholder="使用者暱稱 " type="text" /></div>
+                        </div>
+                        <button type="submit " class="member_register_submitbtn ">註冊新會員</button>
+                    </div>
+                </form>
+
+                <div class="member_sign_in ">
+                    <a href='/member_sigin'> <button class="member_register_submitbtn">已經是會員</button></a>
+                </div>
+                <a class="errortext"></a>
+
+            </div>
+            <meta name="google-signin-client_id" content="836212664164-9qe1rvnjdo7bjaes585a0fc18haaod1j.apps.googleusercontent.com">
+
+            <div class="member_register thirdarea">
+                <a class="member_title register">快速註冊</a>
+                <div id="my-signin2"></div>
+                <!-- <a href="#" onclick="signOut();">Sign out</a> -->
+
+                <script>
+                    function onSuccess(googleUser) {
+                        var profile = googleUser.getBasicProfile();
+                        var id_token = googleUser.getAuthResponse().id_token;
+                        // google_id = profile.getId();
+                        // google_email = profile.getEmail();
+                        // google_name = profile.getName();
+                        // google_image_url = profile.getImageUrl();
+                        // console.log(id_token)
+                        // console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+                        // console.log('Name: ' + profile.getName());
+                        // console.log('Image URL: ' + profile.getImageUrl());
+                        // console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+                        // console.log("id_token", id_token)
+                        // console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+                        // use_google_sigin(google_id, google_email, google_name, google_image_url);
+                        use_google_sigin(id_token);
+
+
+                    }
+
+                    function onFailure(error) {
+                        console.log(error);
+                    }
+
+                    function renderButton() {
+                        gapi.signin2.render('my-signin2', {
+                            'scope': 'profile email',
+                            'width': 300,
+                            'height': 50,
+                            'longtitle': true,
+                            'theme': 'dark',
+                            'onsuccess': onSuccess,
+                            'onfailure': onFailure
+                        });
+                    } //google註冊並登入
+                    function use_google_sigin(id_token) {
+                        data = {
+                            "member_status": "google",
+                            "id_token": id_token
+                                // "member_name": google_name,
+                                // "member_email": google_email,
+                                // "member_password": google_id,
+                                // "member_src": google_image_url
+                        }
+                        fetch("/api/member", {
+                                method: "POST",
+                                body: JSON.stringify(data),
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                }
+                            }).then(res => {
+                                return res.json();
+                            })
+                            .then(result => {
+                                console.log(result);
+
+                                if (result.ok) {
+                                    location.href = '/member?name=' + result.member_name
+
+                                }
+                            });
+                    }
+                </script>
+
+                <!-- <a href="#" onclick="signOut();">Sign out</a> -->
+
+            </div>
+            <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+
+        </div>
+    </div>
+</div>
+<script src="{% static 'js/member.js' %}"></script>
+
+{% endblock %}

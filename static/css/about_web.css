@@ -1,0 +1,169 @@
+    .web_title {
+        background-color: #eae7e5;
+        padding: 0.1% 1%;
+        border-bottom: 3px #c0c0c0 solid;
+        text-align: center;
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 5px;
+        text-shadow: 1px 1px 0px #888888;
+        font-size: 3em;
+        font-weight: bold;
+    }
+    
+    .about_web {
+        font-family: Arial, source-han-sans-traditional, sans-serif;
+        background-color: rgb(236, 236, 236);
+    }
+    
+    .web_top {
+        background-color: #f3f3f3;
+        padding-top: 5px;
+        padding-bottom: 10px;
+        width: 1200px;
+        margin: 0 auto;
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 1.8;
+        text-align: justify;
+    }
+    
+    .member_r_text>p {
+        margin-bottom: 10px;
+        margin-top: 1px;
+    }
+    /* ------------------ */
+    
+    .contact_btn {
+        text-shadow: #8595b0 0.1em 0.1em 0.2em;
+        cursor: pointer;
+        font-size: 1.5em;
+    }
+    
+    .contact_btn:hover {
+        font-weight: 800;
+    }
+    
+    .contact_message_box {
+        border: 0.2px solid #343434;
+        display: none;
+        /* display: flex; */
+        background: #FFFFFF;
+        width: 480px;
+        left: 50%;
+        top: 20%;
+        z-index: 99;
+        border-radius: 6px;
+        justify-content: center;
+        flex-wrap: wrap;
+        position: absolute;
+        transform: translate(-50%, 6%);
+    }
+    
+    .contact_message_box_main_top {
+        width: 100%;
+        height: 15px;
+        background: linear-gradient( 270deg, #313131 0%, #484747 100%);
+    }
+    
+    .contact_message_box_main_top_closebtn {
+        position: absolute;
+        left: 92%;
+        top: 30px;
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+    }
+    
+    .contact_message_box_main_top_closebtn>img {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .contact_message_box_main_top_title {
+        margin: 10px;
+        height: 27px;
+        font-family: Noto Sans TC;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        color: #666666;
+    }
+    
+    .contact_message_box_text {
+        width: 95%;
+        margin: 0 auto;
+    }
+    
+    .contact_message_box_text_textarea {
+        border: 1px solid #CCCCCC;
+        resize: none;
+        height: 200px;
+        width: 100%;
+        font-size: 18px;
+        box-sizing: border-box;
+    }
+    
+    .contact_message_box_main {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .contact_message_box_text_btn {
+        width: 310px;
+        height: 47px;
+        background: #313131;
+        border: #FFFFFF;
+        border-radius: 5px;
+        font-family: Noto Sans TC;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 19px;
+        line-height: 16px;
+        display: flex;
+        color: #FFFFFF;
+        justify-content: center;
+        align-items: center;
+        margin: 10px auto;
+    }
+    
+    .contact_message_box_error_text {
+        font-family: Noto Sans TC;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 20px;
+        color: #f25252;
+        /* position: absolute;
+    bottom: 5%;
+    left: 5%; */
+        /* text-align: center; */
+        margin-left: 10px;
+    }
+    
+    #hidebg_contact {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        background-color: #000;
+        width: 100%;
+        filter: alpha(opacity=60);
+        opacity: 0.6;
+        display: none;
+        z-Index: 50;
+    }
+    
+    @media screen and (min-width: 500px) and (max-width: 1200px) {
+        .web_top {
+            width: 95%;
+        }
+    }
+    
+    @media screen and (max-width: 500px) {
+        .web_top {
+            width: 95%;
+        }
+    }

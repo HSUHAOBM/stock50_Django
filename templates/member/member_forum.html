@@ -1,0 +1,26 @@
+{% extends 'shared/base.html' %}
+{% block title %}股Day-會員文章{% endblock %}
+{% block content %}
+{% load static %}
+
+{% include 'member/member_base.html' %}
+
+<div class=" member_main_member_databydb predict">
+    <div class="data_not_have">
+        <img src="{% static 'img/nodata.png' %}" alt="">
+        <div class="data_not_have_text">
+            <p>目前還沒有預測的資料</p>
+            <p class="data_not_have_text_other">
+                <a>趕快到</a>
+                <a class="data_not_have_text_link" href="/forum">預測股市</a>
+                <a>，發布預測吧！</a></p>
+        </div>
+    </div>
+</div>
+<div class="base_load_gif_member_index">
+    <img src="{% static 'gif/ajax-loader2.gif' %}">
+</div>
+<script src="{% static 'js/member_index.js' %}"></script>
+
+
+{% endblock %}

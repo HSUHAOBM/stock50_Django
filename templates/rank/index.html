@@ -1,0 +1,42 @@
+{% extends 'shared/base.html' %}
+{% block title %}股Day-排行榜{% endblock %}
+{% block content %}
+{% load static %}
+<link href="{% static 'css/rank.css' %}" rel="stylesheet" type="text/css" media="all" />
+
+<a class="ranK_name">排行榜</a>
+
+<div class="ranK">
+
+    <div class="ranK_main">
+        <div class="ranK_main_rate">
+            <div class="rank_title">勝率</div>
+
+            <!-- <div class="rank_data_box">
+                <div class="rank_no">1</div>
+                <div class="rank_data_member">
+                    <img src="img/peo.png" alt=" ">
+                    <div class="rank_data_member_name ">
+                        使用者
+                    </div>
+                    <span class="rank_data_ rate ">
+                            <a class="ranking_stocktitle">勝率：60%</a> </span>
+
+                </div>
+            </div> -->
+        </div>
+        <div class="ranK_main_like">
+            <div class="rank_title">人氣</div>
+        </div>
+        <div class="ranK_main_total">
+            <div class="rank_title">活躍</div>
+        </div>
+    </div>
+    <div class="base_load_gif_rank  ">
+        <img src="{% static 'gif/ajax-loader2.gif' %}">
+    </div>
+    <!-- <div class="member_main_member"></div>
+    <div class="member_main_member_databydb predict"></div> -->
+</div>
+<script src="{% static 'js/rank.js' %}"></script>
+{% endblock %}
