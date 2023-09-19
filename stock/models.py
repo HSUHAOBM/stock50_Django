@@ -16,6 +16,7 @@ class Stock(models.Model):
     def __str__(self):
         return f"{self.code} - {self.name}"
 
+
 class StockInfo(models.Model):
     stock = models.ForeignKey(Stock, related_name='stock', on_delete=models.CASCADE)
     # 日期
@@ -38,6 +39,7 @@ class StockInfo(models.Model):
     price_diff = models.DecimalField(max_digits=10, decimal_places=2)
     # 備註
     remark = models.TextField(blank=True, null=True)
+    create_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'stock_info'

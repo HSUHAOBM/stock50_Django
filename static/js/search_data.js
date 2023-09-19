@@ -45,7 +45,7 @@ function search_member_data_add(member_name, img_src, id) {
     let div_search_data_stock_data_load_box = document.createElement("div");
     div_search_data_stock_data_load_box.className = "serch_stock_result_name";
     div_search_data_stock_data_load_box.addEventListener('click', function() {
-        location.href = 'member?id=' + id
+        location.href = '/member_forum?name=' + id
     });
     search_data_stock_data_load_box.appendChild(div_search_data_stock_data_load_box)
         //                                                         <img src="img/unknown.png ">

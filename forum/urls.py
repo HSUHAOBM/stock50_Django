@@ -8,4 +8,7 @@ urlpatterns = [
     path('', views.main),
     path('about', views.about),
     path('forum', views.forum),
+    path('hello/', views.HelloView.as_view()),
+
+
 ]

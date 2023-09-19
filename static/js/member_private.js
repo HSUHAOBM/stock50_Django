@@ -32,7 +32,7 @@ function member_private_message_load_add(private_member_id, private_member_name,
     div_private_message_name.className = "private_message_name";
     div_private_message_name.textContent = private_member_name
     div_private_message_name.addEventListener('click', function() {
-        location.href = 'member?id=' + private_member_id
+        location.href = '/member_forum?name=' + private_member_id
     });
     div_member_private_message_box.appendChild(div_private_message_name)
 

@@ -28,18 +28,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
 
-# REST_FRAMEWORK = {
-#     # Use Django's standard `django.contrib.auth` permissions,
-#     # or allow read-only access for unauthenticated users.
-#     # 'DEFAULT_PERMISSION_CLASSES': [
-#     #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
-#     # ],
-#     'DEFAULT_PARSER_CLASSES': (
-#         'rest_framework.parsers.JSONParser',
-#     ),
-#     'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S",
-# }
+}
 
 
 # Application definition
@@ -51,8 +47,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'rest_framework',
     'rest_framework.authtoken',
+
     'member',
     'stock',
     'forum',
@@ -153,3 +151,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGIN_URL = '/member_sigin'

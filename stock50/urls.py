@@ -17,20 +17,23 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from member.views import MemberViewSet
+from member.views import UserViewSet
 from forum.views import MessageBoardViewSet
 from stock.views import StockBoardViewSet, StockStopDealDateBoardViewSet
+from rest_framework.authtoken import views
 
 router = DefaultRouter()
-router.register('member', MemberViewSet)
+router.register('User', UserViewSet)
 router.register('forum', MessageBoardViewSet)
 router.register('stock', StockBoardViewSet)
-router.register('stock_stop_deal_date', StockStopDealDateBoardViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+    path('api-token-auth/', views.obtain_auth_token),
+
 
     path('', include('forum.urls', namespace='forum')),
     path('', include('member.urls', namespace='member')),

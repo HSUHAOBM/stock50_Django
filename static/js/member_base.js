@@ -4,6 +4,7 @@ let memer_id = url[url.length - 1]
 let web_member_name = ""
 let web_member_id = ""
 
+// 會員頁
 function load_member_data() {
     fetch("api/member_get_data?id=" + memer_id, {
         method: 'GET'
@@ -36,7 +37,7 @@ function load_member_data() {
         // 標題連結處理
         if (document.querySelector('.member_main_head')) {
             document.querySelector('.member_main_head_btn1').addEventListener('click', function() {
-                location.href = '/member?id=' + memer_id
+                location.href = '/member_forum?name=' + memer_id
             });
             document.querySelector('.member_main_head_btn2').addEventListener('click', function() {
                 location.href = '/member_data?id=' + memer_id
@@ -120,7 +121,6 @@ function updata_img_to_ec2_rwd() {
     })
 }
 
-
 // 修改會員資料表單 讀取原本資料
 function member_data_modifybox_load(result) {
     if (document.querySelector('.member_modify_data_name')) {
@@ -153,8 +153,6 @@ function member_data_modifybox_load(result) {
         document.querySelector('.member_modify_data__title_textarea2').value = result.introduction;
     }
 }
-
-
 
 
 //私訊塊

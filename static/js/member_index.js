@@ -40,7 +40,7 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
     div_predict_message_box_result.appendChild(imgdiv_predict_message_box_result)
 
 
-    //刪除按鈕              
+    //刪除按鈕
 
     let div_delete_predict_message = document.createElement("div");
     div_delete_predict_message.className = "administrator_delete_predict_message";
@@ -90,7 +90,7 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
 
     let a_message_box_title_name = document.createElement("a");
     a_message_box_title_name.className = "message_box_title_name " + message_mid
-    a_message_box_title_name.setAttribute("href", "/member?id=" + predict_message_member_id)
+    a_message_box_title_name.setAttribute("href", "//member_forum?name=" + predict_message_member_id)
     a_message_box_title_name.textContent = predict_message_member_name
     div_message_box_title.appendChild(a_message_box_title_name)
 
@@ -534,7 +534,7 @@ function box_other_write_message_reply_add(user_id, message_mid, reply_message_m
     let a_message_box_other_message_load_right_name = document.createElement("a")
     a_message_box_other_message_load_right_name.className = "message_box_other_message_load_right_name"
     a_message_box_other_message_load_right_name.textContent = reply_member_name
-    a_message_box_other_message_load_right_name.setAttribute("href", "/member?id=" + user_id)
+    a_message_box_other_message_load_right_name.setAttribute("href", "//member_forum?name=" + user_id)
 
     div_message_box_other_message_load_right.appendChild(a_message_box_other_message_load_right_name)
 
@@ -582,7 +582,7 @@ function check_input_(value, alt) {
         document.querySelector('.textarea_message_box_other_message_write.' + alt).value = value.substring(0, maxLen);
         // console.log(value)
     }
-    // otherwise, update 'characters left' counter 
+    // otherwise, update 'characters left' counter
     else if (value.length == 0) {
         document.querySelector('.message_box_text_btn_error_text.' + alt).style.display = "none"
     } else {

@@ -31,7 +31,7 @@ function member_predict_add_rank_web(no, member_name, rank_text, member_src, sta
     div_rank_data_member_box.className = "div_rank_data_member_box";
     if (member_name != "從缺中") {
         div_rank_data_member_box.addEventListener('click', function() {
-            location.href = '/member?id=' + member_id
+            location.href = '//member_forum?name=' + member_id
         });
     }
 

@@ -1,5 +1,5 @@
 from django.db import models
-from member.models import Member
+from django.contrib.auth.models import User
 from stock.models import Stock
 
 # 留言
@@ -17,8 +17,8 @@ class MessageBoard(models.Model):
     stock_status = models.CharField(max_length=2, choices=STOCK_STATUS, null=True, blank=True)
     check_status = models.CharField(max_length=2, choices=CHECK_STATUS, null=True, blank=True)
     text = models.TextField(null=True, blank=True)
-    create_id = models.ForeignKey(Member, null=True, on_delete=models.SET_NULL, related_name='created_messages')
-    write_id = models.ForeignKey(Member, null=True, on_delete=models.SET_NULL, related_name='written_messages')
+    create_id = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='created_messages')
+    write_id = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='written_messages')
     create_date = models.DateTimeField(auto_now_add=True)
     write_date = models.DateTimeField(auto_now=True)
 
@@ -28,12 +28,10 @@ class MessageBoard(models.Model):
     def __str__(self):
         return f"{self.create_id.name} - {self.text}"
 
-
-
 class MessageBoardLike(models.Model):
-    message = models.ForeignKey(MessageBoard, on_delete=models.CASCADE, related_name='like_marks')
+    message = models.ForeignKey(MessageBoard, on_delete=models.CASCADE, related_name='user_like')
     create_date = models.DateTimeField(auto_now_add=True)
-    likes = models.ManyToManyField(Member, related_name='like_message')
+    likes = models.ManyToManyField(User, related_name='like_message')
 
     class Meta:
         db_table = 'message_board_like'
@@ -45,12 +43,12 @@ class MessageBoardLike(models.Model):
 class MessageBoardReply(models.Model):
     message = models.ForeignKey(MessageBoard, on_delete=models.CASCADE, related_name='replies')
     text = models.TextField()
-    create_id = models.ForeignKey(Member, null=True, on_delete=models.SET_NULL, related_name='member_replies')
+    create_id = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='user_replies')
     create_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'message_board_reply'
 
     def __str__(self):
-        return f"Reply by {self.create_id.name} to message: {self.message}"
+        return f"Reply by {self.create_id.username} to message: {self.message}"
 

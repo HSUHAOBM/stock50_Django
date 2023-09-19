@@ -1,9 +1,11 @@
 from django.shortcuts import render
 
 from stock.models import Stock, StockInfo, StockStopDealDate
-from stock.serializers import StockSerializer, StockStopDealDateSerializer
+from stock.serializers import StockSerializer, StockStopDealDateSerializer, StockInfoSerializer
 
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from django.http import HttpResponse, JsonResponse
 from django.utils.timezone import now
@@ -14,7 +16,31 @@ import time
 import random
 import logging
 
+from bs4 import BeautifulSoup
+import urllib.parse
+from django.contrib.auth.decorators import login_required
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+user_agents = [
+        "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
+        "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Acoo Browser; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; .NET CLR 3.0.04506)",
+        "Mozilla/4.0 (compatible; MSIE 7.0; AOL 9.5; AOLBuild 4337.35; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
+        "Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)",
+        "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET CLR 2.0.50727; Media Center PC 6.0)",
+        "Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET CLR 1.0.3705; .NET CLR 1.1.4322)",
+        "Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 5.2; .NET CLR 1.1.4322; .NET CLR 2.0.50727; InfoPath.2; .NET CLR 3.0.04506.30)",
+        "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN) AppleWebKit/523.15 (KHTML, like Gecko, Safari/419.3) Arora/0.3 (Change: 287 c9dfb30)",
+        "Mozilla/5.0 (X11; U; Linux; en-US) AppleWebKit/527+ (KHTML, like Gecko, Safari/419.3) Arora/0.6",
+        "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.2pre) Gecko/20070215 K-Ninja/2.1.1",
+        "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9) Gecko/20080705 Firefox/3.0 Kapiko/3.0",
+        "Mozilla/5.0 (X11; Linux i686; U;) Gecko/20070322 Kazehakase/0.4.5",
+        "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.8) Gecko Fedora/1.9.0.8-1.fc10 Kazehakase/0.5.6",
+        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20",
+        "Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; fr) Presto/2.9.168 Version/11.52",
+        "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Mobile Safari/537.36"]
+
 class StockStopDealDateBoardViewSet(viewsets.ModelViewSet):
     queryset = StockStopDealDate.objects.all()
     serializer_class = StockStopDealDateSerializer
@@ -23,11 +49,64 @@ class StockBoardViewSet(viewsets.ModelViewSet):
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
 
+    lookup_field = 'code'
+
+    # /api/stock/get_all_info/
+    @action(detail=False, methods=['get'])
+    def get_all_info(self, request):
+        code = request.query_params.get('code', None)
+        stock = Stock.objects.filter(code=code).first()
+
+        if not stock:
+            return Response({'detail': 'Stock not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        stock_info = StockInfo.objects.filter(stock=stock).order_by('-date')
+        serializer = StockInfoSerializer(stock_info, many=True)
+
+        stock_name = stock.name
+        serialized_data = serializer.data
+        serialized_data['stock_name'] = stock_name
+        return Response(serialized_data, status=status.HTTP_200_OK)
+
+    # /api/stock/get_last_info/
+    @action(detail=False, methods=['get'])
+    def get_last_info(self, request):
+        code = request.query_params.get('code', None)
+        stock = Stock.objects.filter(code=code).first()
+
+        if not stock:
+            return Response({'detail': 'Stock not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        latest_stock_info = StockInfo.objects.filter(stock=stock).latest('date')
+        serializer = StockInfoSerializer(latest_stock_info)
+
+        stock_name = stock.name
+        serialized_data = serializer.data
+        serialized_data['stock_name'] = stock_name
+
+        return Response(serialized_data, status=status.HTTP_200_OK)
+
+    # /api/stock/get_stock_news/
+    @action(detail=False, methods=['get'])
+    def get_stock_news(self, request):
+        stock_name = request.query_params.get('stock_name', '')
+        news_data = get_news(stock_name)
+        return JsonResponse({'news': news_data})
+
+
+# 資訊頁面
+@login_required
 def stock_info(request, num):
     return render(request, 'stock/stock_info.html')
 
 # 取得台灣50名單
 def get_stock50_list(request):
+    # authorization_header = request.META.get("HTTP_TOKEN", "")
+    # if authorization_header.startswith("Token"):
+    #     token = authorization_header.split(" ")[1]
+    # else:
+    #     return JsonResponse({"error": "Token not provided"}, status=401)
+
     url = 'https://www.yuantaetfs.com/api/Composition?fundid=1066'
     res = requests.get(url)
     stock50_data = json.loads(res.text)
@@ -134,8 +213,6 @@ def get_stock_stopdeal(request):
 
 # 取得股票當日最新收盤
 def get_stock_info(request, stock_id=None):
-
-    # print(request)
     # request.environ['HTTP_HOST']
     get_ok = True
     if stock_id :
@@ -146,10 +223,6 @@ def get_stock_info(request, stock_id=None):
             if not get_stock_info_data(stock.code):
                 get_ok = False
                 continue
-
-
-
-
     response_data = {"ok": get_ok}
     return JsonResponse(response_data)
 
@@ -161,25 +234,6 @@ def get_stock_info_data(stock_code):
     existing_data = StockInfo.objects.filter(stock=stock_instance, date=datetime.now().date())
     if existing_data.exists():
         return False
-
-    user_agents = [
-        "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
-        "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Acoo Browser; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; .NET CLR 3.0.04506)",
-        "Mozilla/4.0 (compatible; MSIE 7.0; AOL 9.5; AOLBuild 4337.35; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
-        "Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)",
-        "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET CLR 2.0.50727; Media Center PC 6.0)",
-        "Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET CLR 1.0.3705; .NET CLR 1.1.4322)",
-        "Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 5.2; .NET CLR 1.1.4322; .NET CLR 2.0.50727; InfoPath.2; .NET CLR 3.0.04506.30)",
-        "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN) AppleWebKit/523.15 (KHTML, like Gecko, Safari/419.3) Arora/0.3 (Change: 287 c9dfb30)",
-        "Mozilla/5.0 (X11; U; Linux; en-US) AppleWebKit/527+ (KHTML, like Gecko, Safari/419.3) Arora/0.6",
-        "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.2pre) Gecko/20070215 K-Ninja/2.1.1",
-        "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9) Gecko/20080705 Firefox/3.0 Kapiko/3.0",
-        "Mozilla/5.0 (X11; Linux i686; U;) Gecko/20070322 Kazehakase/0.4.5",
-        "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.8) Gecko Fedora/1.9.0.8-1.fc10 Kazehakase/0.5.6",
-        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11",
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20",
-        "Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; fr) Presto/2.9.168 Version/11.52",
-        "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Mobile Safari/537.36"]
 
     url = "https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=" + datetime.now().strftime('%Y%m%d') + "&stockNo=" + str(stock_code)
     headers = {"user-agent":random.choice(user_agents)}
@@ -247,3 +301,24 @@ def get_stock_info_data(stock_code):
                 logging.error("%s - %s 資訊取得錯誤：%s" % (stock_instance.code, stock_instance.name, str(e)))
                 return False
     time.sleep(1/2)
+
+
+
+def get_news(stock_name):
+    get_news_money_list = []
+
+    key_word = urllib.parse.quote(stock_name)
+    url = "https://money.udn.com/search/result/1001/" + key_word
+    headers = {"user-agent": random.choice(user_agents)}
+    resp = requests.get(url, headers=headers)
+    soup = BeautifulSoup(resp.text, "lxml")
+    elem = soup.select(".story__content")
+    for e in elem[0:5]:
+        for date in e.select("time"):
+            date = date.text
+        for title in e.select("h3"):
+            title = title.text.split()[0]
+        for src in e.select("a"):
+            src = src.get('href')
+        get_news_money_list.append({"date": date, "title": title, "src": src})
+    return get_news_money_list

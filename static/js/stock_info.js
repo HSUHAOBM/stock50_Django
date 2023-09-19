@@ -1,7 +1,6 @@
 let url = location.href;
-url = url.split("stock_id=")
+url = url.split("stock_info/")
 let stock_info_stock_id = url[url.length - 1]
-    // console.log(stock_info_stock_id)
 
 let div_member_main_member_databydb = document.querySelector('.member_main_member_databydb.predict')
 let check_function_end = true;
@@ -13,34 +12,47 @@ let web_stock_name = ""
 /*-----------------------------*/
 //stock_data
 function stock_data_load() {
-    fetch("/api/getstock_info?stock_id=" + stock_info_stock_id).then(function(response) {
-        return response.json();
-    }).then(function(result) {
-        // console.log(result)
-        if (result.ok) {
+    fetch("/api/stock/get_last_info/?code=" + stock_info_stock_id)
+    .then(function(response) {
+        if (response.status === 200) {
+            return response.json();
+        } else {
+            window.location.href = "/";
+        }
+        }).then(function(result) {
 
-            document.querySelector('.stock_data_info.date').textContent = result.data.date;
-            document.querySelector('.stock_data_info.total').textContent = result.data.total;
-            document.querySelector('.stock_data_info.open_price').textContent = result.data.open_price;
-            document.querySelector('.stock_data_info.high_price').textContent = result.data.high_price;
-            document.querySelector('.stock_data_info.low_price').textContent = result.data.low_price;
-            document.querySelector('.stock_data_info.end_price').textContent = result.data.end_price;
-            document.querySelector('.stock_data_info.differ').textContent = result.data.differ;
-            document.querySelector('.stock_data_info.totaldeal').textContent = result.data.total_deal;
-            document.querySelector('.stock_info_update_time').textContent = "更新時間：" + result.data.update_time;
+        let create_date = new Date(result.create_date);
+        var formattedDateString = create_date.toLocaleString(undefined, {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: false , // 使用24小时制
+            // timeZone: 'UTC'
+        });
 
+        if (result) {
+            document.querySelector('.stock_data_info.date').textContent = result.date;
+            document.querySelector('.stock_data_info.total').textContent = result.volume;
+            document.querySelector('.stock_data_info.open_price').textContent = result.open_price;
+            document.querySelector('.stock_data_info.high_price').textContent = result.high_price;
+            document.querySelector('.stock_data_info.low_price').textContent = result.low_price;
+            document.querySelector('.stock_data_info.end_price').textContent = result.close_price;
+            document.querySelector('.stock_data_info.differ').textContent = result.price_diff;
+            document.querySelector('.stock_data_info.totaldeal').textContent = result.transaction_count;
+            document.querySelector('.stock_info_update_time').textContent = "更新時間：" + formattedDateString;
 
-
-            document.querySelector('.stock_data_info.date_').textContent = result.data.date;
-            document.querySelector('.stock_data_info.total_').textContent = result.data.total;
-            document.querySelector('.stock_data_info.open_price_').textContent = result.data.open_price;
-            document.querySelector('.stock_data_info.high_price_').textContent = result.data.high_price;
-            document.querySelector('.stock_data_info.low_price_').textContent = result.data.low_price;
-            document.querySelector('.stock_data_info.end_price_').textContent = result.data.end_price;
-            document.querySelector('.stock_data_info.differ_').textContent = result.data.differ;
-            document.querySelector('.stock_data_info.totaldeal_').textContent = result.data.total_deal;
-            document.querySelector('.stock_info_update_time_').textContent = "更新時間：" + result.data.update_time;
-            stock_news_load(result.data.stock_name)
+            document.querySelector('.stock_data_info.date_').textContent = result.date;
+            document.querySelector('.stock_data_info.total_').textContent = result.volume;
+            document.querySelector('.stock_data_info.open_price_').textContent = result.open_price;
+            document.querySelector('.stock_data_info.high_price_').textContent = result.high_price;
+            document.querySelector('.stock_data_info.low_price_').textContent = result.low_price;
+            document.querySelector('.stock_data_info.end_price_').textContent = result.close_price;
+            document.querySelector('.stock_data_info.differ_').textContent = result.price_diff;
+            document.querySelector('.stock_data_info.totaldeal_').textContent = result.transaction_count;
+            document.querySelector('.stock_info_update_time_').textContent = "更新時間：" + formattedDateString;
+            stock_news_load(result.stock_name)
         }
     })
 }
@@ -59,7 +71,6 @@ function stock_new_load_add(date, text, src) {
     // });
     div_stock_new_box.appendChild(div_stock_new_data)
 
-
     let div_stock_new_data_date = document.createElement("div");
     div_stock_new_data_date.className = "stock_new_data date";
     div_stock_new_data_date.textContent = date
@@ -77,20 +88,19 @@ function stock_new_load_add(date, text, src) {
 function stock_news_load(stock_name) {
     document.querySelector('.base_load_gif_stock_info.load_news').style.display = "flex";
 
-    fetch("api/getstock_new?stock_name=" + stock_name).then(function(response) {
-        return response.json();
-    }).then(function(result) {
-        // console.log(result)
-        if (result.ok) {
-            for (let i = 0; i < result.data.length; i++) {
-                // console.log(result.data[i])
-                stock_new_load_add(result.data[i].date, result.data[i].title, result.data[i].src)
-                document.querySelector('.base_load_gif_stock_info.load_news').style.display = "none";
-
+    fetch("/api/stock/get_stock_news?stock_name=" + stock_name)
+        .then(function(response) {
+            return response.json();
+        }).then(function(result) {
+            if (result) {
+                for (let i = 0; i < result.news.length; i++) {
+                    stock_new_load_add(result.news[i].date, result.news[i].title, result.news[i].src)
+                    document.querySelector('.base_load_gif_stock_info.load_news').style.display = "none";
+                }
             }
-        }
-    })
+        })
 }
+
 /*-----------------------------*/
 //rank
 // 讀取排行資料
@@ -102,8 +112,6 @@ function member_predict_load_message_stock_info(data_status) {
         if (result.data.member_no_data) {
             document.querySelector('.data_not_have').style.display = "flex";
             document.querySelector('.member_rank_win_title.' + data_status).style.display = "none";
-
-
         }
 
         if (result.ok) {
@@ -121,24 +129,17 @@ function member_predict_load_message_stock_info(data_status) {
                 } else {
                     member_name = "無";
                     member_src = "無";
-
-
                     predict_win_rate = "無";
                     predict_win = "無";
                     predict_fail = "無";
                     predict_total = "無";
                     lod_rank_data_have = false
                 }
-
-
                 // console.log(i, member_name, predict_win, predict_fail, predict_total, predict_win_rate)
                 load_rank_rate_add_stock_info(i + 1, member_src, member_name, predict_win_rate, predict_win, predict_fail, predict_total, lod_rank_data_have)
                 document.querySelector('.base_load_gif_stock_info.load_rank').style.display = "none";
-
             }
         }
-
-
     })
 }
 
@@ -268,16 +269,6 @@ function load_rank_rate_add_stock_info(no, member_src, member_name, predict_win_
 function member_predict_add_message(predict_message_member_id, predict_stock, predict_trend, predict_message, predict_message_member_name, predict_message_member_img_src, time, time_about, message_mid, message_check_status, login_member_name_good_have, message_good_number, message_reply_number, message_reply_data) {
     let div_predict_message_box = document.createElement("div");
     div_predict_message_box.className = "predict_message_box";
-
-    // if (main_left_center.firstChild == null) {
-
-    //     main_left_center.appendChild(div_predict_message_box)
-    // } else {
-
-    //     main_left_center.insertBefore(div_predict_message_box, main_left_center.childNodes[0]);
-    //     //父.insertBefore(加入，被加入)
-    // }
-
     div_member_main_member_databydb.appendChild(div_predict_message_box)
 
     //<div class="predict_message_box_result"><img src=" img/fail.png " alt=" "></div>
@@ -302,7 +293,7 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
     div_predict_message_box_result.appendChild(imgdiv_predict_message_box_result)
 
 
-    //刪除按鈕              
+    //刪除按鈕
 
     let div_delete_predict_message = document.createElement("div");
     div_delete_predict_message.className = "administrator_delete_predict_message";
@@ -352,7 +343,7 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
 
     let a_message_box_title_name = document.createElement("a");
     a_message_box_title_name.className = "message_box_title_name " + message_mid
-    a_message_box_title_name.setAttribute("href", "/member?id=" + predict_message_member_id)
+    a_message_box_title_name.setAttribute("href", "//member_forum?name=" + predict_message_member_id)
     a_message_box_title_name.textContent = predict_message_member_name
     div_message_box_title.appendChild(a_message_box_title_name)
 
@@ -564,9 +555,7 @@ function member_predict_load_message() {
         // console.log(result)
         if (result.data.error) {
             location.href = '/'
-
         }
-
         if (result.data.stock_no_data) {
             // console.log("hi")
             web_stock_name = stock_info_stock_id + "－" + result.data.find
@@ -658,20 +647,15 @@ function predict_message_btn_enter_like(message_mid_like, message_member) {
                 // console.log(result);
                 if (result.ok) {
 
-
                     document.querySelector('#' + message_mid_like + ">img").src = "img/likeA.png";
-
                     document.querySelector('#' + message_mid_like).onclick = function() {
                         predict_message_btn_enter_unlike(message_mid_like)
-
-
                     }
                     let good_int = parseInt(document.querySelector('#' + message_mid_like + ">a").textContent.split('讚 (')[1].split(')')[0]) + 1
                     let good_str = good_int.toString()
                     document.querySelector('#' + message_mid_like + ">a").textContent = '讚 (' + good_str + ')'
                     check_function_end = true
                 }
-
             });
     }
 }
@@ -738,7 +722,6 @@ function message_box_other_message_load_diplay_none(message_mid) {
     document.querySelector('.img_div_message_box_btn_message.' + message_mid).src = "img/chat.png"
 }
 
-
 /*-----------------------------*/
 // 傳送留言的回覆
 function box_other_write_message_reply(message_mid) {
@@ -753,7 +736,6 @@ function box_other_write_message_reply(message_mid) {
             "message_mid": message_mid,
             "message_reply_text": message_reply_text
         }
-
 
 
         if (message_reply_text.length <= 50) {
@@ -802,11 +784,7 @@ function box_other_write_message_reply(message_mid) {
 
 // 增加回覆區物件
 function box_other_write_message_reply_add(user_id, message_mid, reply_message_mid, reply_member_img_src, reply_member_name, reply_message_text, reply_time, reply_time_about) {
-
-
     let div_message_box_other_message = document.querySelector('.message_box_other_message.' + message_mid);
-
-
     let div_message_box_other_message_load = document.createElement("div");
     div_message_box_other_message_load.className = "message_box_other_message_load " + reply_message_mid;
 
@@ -836,7 +814,7 @@ function box_other_write_message_reply_add(user_id, message_mid, reply_message_m
     let a_message_box_other_message_load_right_name = document.createElement("a")
     a_message_box_other_message_load_right_name.className = "message_box_other_message_load_right_name"
     a_message_box_other_message_load_right_name.textContent = reply_member_name
-    a_message_box_other_message_load_right_name.setAttribute("href", "/member?id=" + user_id)
+    a_message_box_other_message_load_right_name.setAttribute("href", "//member_forum?name=" + user_id)
 
     div_message_box_other_message_load_right.appendChild(a_message_box_other_message_load_right_name)
 
@@ -857,9 +835,7 @@ function box_other_write_message_reply_add(user_id, message_mid, reply_message_m
 
 }
 
-
 /*-----------------------------*/
-
 
 //功能-畫面捲動監聽
 window.addEventListener('scroll', function() {
@@ -867,17 +843,14 @@ window.addEventListener('scroll', function() {
     if (10 > (webwarp.scrollHeight - window.pageYOffset - window.innerHeight) & check_onload == true & forum_page != null) {
         check_onload = false;
         forum_page += 1;
-        document.querySelector('.base_load_gif_stick_info.load_message').style.display = "flex";
+        // document.querySelector('.base_load_gif_stick_info.load_message').style.display = "flex";
 
         member_predict_load_message()
 
     }
 })
 
-
 /*----------留言板字數監控---------*/
-
-
 function check_input_(value, alt) {
     // console.log(value, alt)
     let maxLen = 50;
@@ -887,7 +860,7 @@ function check_input_(value, alt) {
         document.querySelector('.textarea_message_box_other_message_write.' + alt).value = value.substring(0, maxLen);
         // console.log(value)
     }
-    // otherwise, update 'characters left' counter 
+    // otherwise, update 'characters left' counter
     else if (value.length == 0) {
         document.querySelector('.message_box_text_btn_error_text.' + alt).style.display = "none"
     } else {
@@ -895,8 +868,6 @@ function check_input_(value, alt) {
         document.querySelector('.message_box_text_btn_error_text.' + alt).style.display = "flex"
     }
 }
-
-
 /*-----------------------------*/
 function administrator_delete_predict(mid, member_user_id) {
     let delete_predict = {
@@ -923,9 +894,9 @@ function administrator_delete_predict(mid, member_user_id) {
 }
 /*-----------------------------*/
 
-
 function init() {
     member_predict_load_message_stock_info()
     stock_data_load()
     member_predict_load_message()
 }
+init()
