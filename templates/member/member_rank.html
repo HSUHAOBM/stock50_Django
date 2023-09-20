@@ -1,9 +1,8 @@
-{% extends 'shared/base.html' %}
+{% extends 'member/member_base.html' %}
 {% block title %}股Day-會員排行{% endblock %}
-{% block content %}
+{% block additional_content %}
 {% load static %}
 
-{% include 'member/member_base.html' %}
 <link href="{% static 'css/member_rank.css' %}" rel="stylesheet" type="text/css" media="all" />
 
 <div class=" member_main_member_databydb rank ">

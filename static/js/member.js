@@ -38,13 +38,11 @@ memberform.addEventListener('submit', function(event) {
                 return res.json();
             })
             .then(result => {
-                console.log(result);
-                if (result.error) {
-                    error_text.textContent = result.message;
-                };
                 if (result.ok) {
                     if (member_name != "") {
                         location.href = '/member_sigin'
+                    }else{
+                        error_text.textContent = result.message;
                     }
                 }
             });
@@ -52,7 +50,6 @@ memberform.addEventListener('submit', function(event) {
 
         //  登入
         if (member_name == "") {
-
             data = {
                 "member_email": member_email,
                 "member_password": member_password
@@ -67,12 +64,10 @@ memberform.addEventListener('submit', function(event) {
                 return res.json();
             })
             .then(result => {
-                console.log(result);
-                if (result.error) {
-                    error_text.textContent = result.message;
-                };
                 if (result.ok) {
-                    location.href = '/member/name/' + result.name
+                    location.href = '/member_forum?name=' + result.name
+                }else{
+                    error_text.textContent = result.message;
                 }
             });
         }

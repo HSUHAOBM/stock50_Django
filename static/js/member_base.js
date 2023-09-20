@@ -1,99 +1,102 @@
 let url = location.href;
-url = url.split("id=")
-let memer_id = url[url.length - 1]
+url = url.split("name=")
+let memer_name = url[url.length - 1]
 let web_member_name = ""
 let web_member_id = ""
 
 // 會員頁
 function load_member_data() {
-    fetch("api/member_get_data?id=" + memer_id, {
+    fetch("/api/User/check/?name=" + memer_name, {
         method: 'GET'
     }).then(function(res) {
         return res.json();
     }).then(function(result) {
+        console.log(result)
         web_member_name = result.name
         web_member_id = result.id
-        if (result.error) {
-            location.href = '/'
-        }
+
+        if (result.ok){
         //基本資料讀取
-        if (document.querySelector('.member_main_member')) {
-            document.querySelector('.member_main_member_img>img').src = result.picturesrc;
-            document.querySelector('.member_main_member_data_.name').textContent = result.name;
-            document.querySelector('.member_main_member_data_.interests.text').textContent = result.interests;
-            document.querySelector('.member_main_member_data_.introduction.text').textContent = result.introduction;
-            document.querySelector('.member_main_member_data_.good.text').textContent = result.like_total_number + "個";
-            if (result.rank_total.nodata) {
-                document.querySelector('.member_main_member_data_.rate.text1').textContent = "目前還沒有預測的資料";
+            if (document.querySelector('.member_main_member')) {
+                document.querySelector('.member_main_member_img>img').src = result.avatar_url;
+                document.querySelector('.member_main_member_data_.name').textContent = result.username;
+                document.querySelector('.member_main_member_data_.interests.text').textContent = result.interests;
+                document.querySelector('.member_main_member_data_.introduction.text').textContent = result.self_intro;
+                document.querySelector('.member_main_member_data_.good.text').textContent = result.like_total_number + "個";
+                if (result.have_rank) {
+                    document.querySelector('.member_main_member_data_.rate.text1').textContent = "目前還沒有預測的資料";
+                } else {
+                    document.querySelector('.member_main_member_data_.rate.text1').textContent = "成功：" + result.rank_total_win + "次、失敗：" + result.rank_total_fail + "次";
+                    document.querySelector('.member_main_member_data_.rate.text2').textContent = "預測：" + result.rank_total_total + "次， 勝率 " + result.rank_total_rate + " % ";
+                }
+                document.querySelector('.member_main_member_data').style.display = "flex";
+                document.querySelector('.base_load_gif_member_basedata').style.display = "none";
+
+            }
+
+            // 標題連結處理
+            if (document.querySelector('.member_main_head')) {
+                document.querySelector('.member_main_head_btn1').addEventListener('click', function() {
+                    location.href = '/member_forum?name=' + memer_name
+                });
+                document.querySelector('.member_main_head_btn2').addEventListener('click', function() {
+                    location.href = '/member_profile?name=' + memer_name
+                });
+                document.querySelector('.member_main_head_btn3').addEventListener('click', function() {
+                    location.href = '/member_rank?name=' + memer_name
+                });
+                document.querySelector('.member_main_head_btn4').addEventListener('click', function() {
+                    location.href = '/member_private?name=' + memer_name
+                });
+            }
+
+
+            // 修改資料的讀取
+            if (document.querySelector('.member_modify_data')) {
+                member_data_modifybox_load(result)
+            }
+            // 網頁基本資料的讀取
+            if (document.querySelector('.member_main_member_databydb_memberdata_box')) {
+                // document.querySelector('.member_main_member_databydb_memberdata.text.name').textContent = result.name;
+                document.querySelector('.member_main_member_databydb_memberdata.text.gender').textContent = result.gender;
+                document.querySelector('.member_main_member_databydb_memberdata.text.date').textContent = result.create_date;
+                document.querySelector('.member_main_member_databydb_memberdata.text.birthday').textContent = result.birthday;
+                document.querySelector('.member_main_member_databydb_memberdata.text.address').textContent = result.address;
+                // document.querySelector('.member_main_member_databydb_memberdata.text.interest').textContent = result.interests;
+                // document.querySelector('.member_main_member_databydb_memberdata.text.introduction').textContent = result.introduction;
+                document.querySelector('.base_load_gif_member_data').style.display = "none";
+            }
+
+            if (result.is_self) {
+                if (document.querySelector('.member_main_member_img_change')) {
+                    document.querySelector('.member_main_member_img_change').style.display = "flex";
+                }
+                if (document.querySelector('.member_modify_btn>button')) {
+                    document.querySelector('.member_modify_btn>button').style.display = "flex";
+                }
+                if (document.querySelector('.follow_btn')) {
+                    document.querySelector('.follow_btn').style.display = "none";
+                }
+                if (document.querySelector('.member_main_head_btn4')) {
+                    document.querySelector('.member_main_head_btn4').style.display = "flex";
+                }
             } else {
-                document.querySelector('.member_main_member_data_.rate.text1').textContent = "成功：" + result.rank_total.win + "次、失敗：" + result.rank_total.fail + "次";
-                document.querySelector('.member_main_member_data_.rate.text2').textContent = "預測：" + result.rank_total.total + "次， 勝率 " + result.rank_total.rate + " % ";
-            }
-            document.querySelector('.member_main_member_data').style.display = "flex";
-            document.querySelector('.base_load_gif_member_basedata').style.display = "none";
+                if (document.querySelector('.member_main_member_img_change')) {
+                    document.querySelector('.member_main_member_img_change').style.display = "none";
 
-        }
-
-        // 標題連結處理
-        if (document.querySelector('.member_main_head')) {
-            document.querySelector('.member_main_head_btn1').addEventListener('click', function() {
-                location.href = '/member_forum?name=' + memer_id
-            });
-            document.querySelector('.member_main_head_btn2').addEventListener('click', function() {
-                location.href = '/member_data?id=' + memer_id
-            });
-            document.querySelector('.member_main_head_btn3').addEventListener('click', function() {
-                location.href = '/member_rank?id=' + memer_id
-            });
-            document.querySelector('.member_main_head_btn4').addEventListener('click', function() {
-                location.href = '/member_private?id=' + memer_id
-            });
-        }
-
-
-        // 修改資料的讀取
-        if (document.querySelector('.member_modify_data')) {
-            member_data_modifybox_load(result)
-        }
-        // 網頁基本資料的讀取
-        if (document.querySelector('.member_main_member_databydb_memberdata_box')) {
-            // document.querySelector('.member_main_member_databydb_memberdata.text.name').textContent = result.name;
-            document.querySelector('.member_main_member_databydb_memberdata.text.gender').textContent = result.gender;
-            document.querySelector('.member_main_member_databydb_memberdata.text.date').textContent = result.registertime;
-            document.querySelector('.member_main_member_databydb_memberdata.text.birthday').textContent = result.birthday;
-            document.querySelector('.member_main_member_databydb_memberdata.text.address').textContent = result.address;
-            // document.querySelector('.member_main_member_databydb_memberdata.text.interest').textContent = result.interests;
-            // document.querySelector('.member_main_member_databydb_memberdata.text.introduction').textContent = result.introduction;
-            document.querySelector('.base_load_gif_member_data').style.display = "none";
-        }
-
-        if (memer_id == encodeURIComponent(result.login_member_id)) {
-            if (document.querySelector('.member_main_member_img_change')) {
-                document.querySelector('.member_main_member_img_change').style.display = "flex";
+                }
+                if (document.querySelector('.member_modify_btn>button')) {
+                    document.querySelector('.member_modify_btn>button').style.display = "none";
+                }
+                if (document.querySelector('.follow_btn')) {
+                    document.querySelector('.follow_btn').style.display = "flex";
+                }
+                if (document.querySelector('.member_main_head_btn4')) {
+                    document.querySelector('.member_main_head_btn4').style.display = "none";
+                }
             }
-            if (document.querySelector('.member_modify_btn>button')) {
-                document.querySelector('.member_modify_btn>button').style.display = "flex";
-            }
-            if (document.querySelector('.follow_btn')) {
-                document.querySelector('.follow_btn').style.display = "none";
-            }
-            if (document.querySelector('.member_main_head_btn4')) {
-                document.querySelector('.member_main_head_btn4').style.display = "flex";
-            }
-        } else {
-            if (document.querySelector('.member_main_member_img_change')) {
-                document.querySelector('.member_main_member_img_change').style.display = "none";
-
-            }
-            if (document.querySelector('.member_modify_btn>button')) {
-                document.querySelector('.member_modify_btn>button').style.display = "none";
-            }
-            if (document.querySelector('.follow_btn')) {
-                document.querySelector('.follow_btn').style.display = "flex";
-            }
-            if (document.querySelector('.member_main_head_btn4')) {
-                document.querySelector('.member_main_head_btn4').style.display = "none";
-            }
+        }else{
+            location.href = '/'
         }
     })
 }
@@ -124,7 +127,7 @@ function updata_img_to_ec2_rwd() {
 // 修改會員資料表單 讀取原本資料
 function member_data_modifybox_load(result) {
     if (document.querySelector('.member_modify_data_name')) {
-        document.querySelector('.member_modify_data_name').value = result.name;
+        document.querySelector('.member_modify_data_name').value = result.username;
     }
     if (document.querySelector('.member_modify_data_address')) {
         document.querySelector('.member_modify_data_address').value = result.address;
@@ -150,7 +153,7 @@ function member_data_modifybox_load(result) {
         document.querySelector('.member_modify_data__title_textarea1').value = result.interests;
     }
     if (document.querySelector('.member_modify_data__title_textarea2')) {
-        document.querySelector('.member_modify_data__title_textarea2').value = result.introduction;
+        document.querySelector('.member_modify_data__title_textarea2').value = result.self_intro;
     }
 }
 

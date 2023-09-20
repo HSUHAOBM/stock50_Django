@@ -81,7 +81,7 @@ function load_member_data() {
                     location.href = '/member_forum?name=' + login_member_name
                 });
                 document.querySelector('.main_right_memberdata_div>img').src = login_member_img_src;
-                if (result.rank_total.ok) {
+                if (result.have_rank) {
                     document.querySelector('.main_right_memberdata.rate').textContent = "勝率：" + result.rank_total.rate + " %";
                     document.querySelector('.main_right_memberdata.success').textContent = "成功：" + result.rank_total.win + " 次";
                     document.querySelector('.main_right_memberdata.fail').textContent = "失敗：" + result.rank_total.fail + " 次";
@@ -89,7 +89,7 @@ function load_member_data() {
                     document.querySelector('.main_right_memberdata.like').textContent = "讚：" + result.like_total_number + " 個";
 
                 }
-                if (result.rank_total.nodata) {
+                else {
                     document.querySelector('.main_right_memberdata.rate').textContent = "目前沒有預測的成績";
                     document.querySelector('.main_right_memberdata.success').textContent = "-資料於收盤後更新-";
                     document.querySelector('.main_right_memberdata.fail').style.display = "none"

@@ -1,3 +1,5 @@
+{% extends 'shared/base.html' %}
+{% block content %}
 {% load static %}
 
 <link href="{% static 'css/member_base.css' %}" rel="stylesheet" type="text/css" media="all" />
@@ -46,7 +48,8 @@
             <div onclick="location.href='/member_fans'" class="member_main_head_btn4">私人訊息</div>
             <!-- 私人訊息 -->
         </div>
-
+        {% block additional_content  %}
+        {% endblock %}
         <div id="hidebg_private" onClick="close_private_message_box()"></div>
         <div class="private_message_box ">
             <div class="private_message_box_main ">
@@ -72,3 +75,4 @@
 
 </div>
 </div>
+{% endblock %}

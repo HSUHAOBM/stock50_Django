@@ -343,7 +343,7 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
 
     let a_message_box_title_name = document.createElement("a");
     a_message_box_title_name.className = "message_box_title_name " + message_mid
-    a_message_box_title_name.setAttribute("href", "//member_forum?name=" + predict_message_member_id)
+    a_message_box_title_name.setAttribute("href", "/member_forum?name=" + predict_message_member_id)
     a_message_box_title_name.textContent = predict_message_member_name
     div_message_box_title.appendChild(a_message_box_title_name)
 
@@ -814,7 +814,7 @@ function box_other_write_message_reply_add(user_id, message_mid, reply_message_m
     let a_message_box_other_message_load_right_name = document.createElement("a")
     a_message_box_other_message_load_right_name.className = "message_box_other_message_load_right_name"
     a_message_box_other_message_load_right_name.textContent = reply_member_name
-    a_message_box_other_message_load_right_name.setAttribute("href", "//member_forum?name=" + user_id)
+    a_message_box_other_message_load_right_name.setAttribute("href", "/member_forum?name=" + user_id)
 
     div_message_box_other_message_load_right.appendChild(a_message_box_other_message_load_right_name)
 

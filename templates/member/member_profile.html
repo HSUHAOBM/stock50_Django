@@ -1,9 +1,11 @@
-{% extends 'shared/base.html' %}
+{% extends 'member/member_base.html' %}
 {% block title %}股Day-會員資料{% endblock %}
-{% block content %}
+
 {% load static %}
 
-{% include 'member/member_base.html' %}
+<!-- {% include 'member/member_base.html' %} -->
+{% block additional_content %}
+
 <link href="{% static 'css/member_profile.css' %}" rel="stylesheet" type="text/css" media="all" />
 
 <div class="member_main_member_databydb">
@@ -27,7 +29,6 @@
 <div class="base_load_gif_member_data">
     <img src="{% static 'gif/ajax-loader2.gif' %}">
 </div>
-
 
 <!-- 修改會員的表單 -->
 <div id="hidebg" onClick="close_member_modify_data()"></div>
@@ -78,8 +79,8 @@
         </div>
         <div class="member_modify_data__title_gender">
             <a>性別：</a>
-            <input class="member_modify_data__title_gender_input1" type="radio" name="member_modify_gender" value="男" required>男
-            <input class="member_modify_data__title_gender_input2" type="radio" name="member_modify_gender" value="女">女
+            <input class="member_modify_data__title_gender_input1" type="radio" name="member_modify_gender" value="Male" required>男
+            <input class="member_modify_data__title_gender_input2" type="radio" name="member_modify_gender" value="Female">女
         </div>
 
         <div class="member_modify_data__title">

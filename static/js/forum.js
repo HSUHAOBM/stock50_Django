@@ -613,7 +613,7 @@ function box_other_write_message_reply_add(user_id, message_mid, reply_message_m
     let a_message_box_other_message_load_right_name = document.createElement("a")
     a_message_box_other_message_load_right_name.className = "message_box_other_message_load_right_name"
     a_message_box_other_message_load_right_name.textContent = reply_member_name
-    a_message_box_other_message_load_right_name.setAttribute("href", "//member_forum?name=" + user_id)
+    a_message_box_other_message_load_right_name.setAttribute("href", "/member_forum?name=" + user_id)
     div_message_box_other_message_load_right.appendChild(a_message_box_other_message_load_right_name)
 
     // 文字

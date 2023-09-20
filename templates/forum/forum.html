@@ -11,9 +11,9 @@
                         <div class="main_left_top_inputbox">
                             <a class="main_left_top_title"> 預測分享</a>
                             <select class="stock_select_list" onchange="stock_select_change()" name="member_predict_stock">
-                                <!-- {% for stock in stock_data %}
-                                    <option value="{{stock}}">{{stock}}</option>
-                                {% endfor %} -->
+                                {% for stock in stock_data %}
+                                    <option value="{{ stock.code }} - {{ stock.name }}">{{ stock.code }} - {{ stock.name }}</option>
+                                {% endfor %}
                             </select>
                             <div class="div_message_btnbox ">
                                 <div class="div_message_btn bt1 ">
@@ -34,14 +34,14 @@
                             <div class="member_out_text ">
                                 <div>
                                     <a>預測： </a>
-                                    <a href="/stock_info?stock_id=2303" class="member_out_stock name ">2303－聯電</a>
+                                    <a href="/stock_info?stock_id=2303" class="member_out_stock name ">0050－元大台灣50</a>
                                 </div>
                                 <div>
                                     <a> 下次開盤走勢為 </a>
                                     <a class="member_out_stock trend "></a>
                                 </div>
                             </div>
-                            <textarea required type="text" onKeyDown="check_input(this.value)" onKeyUp="check_input(this.value)" placeholder="分享你對 2303－聯電 的想法 ... " class="textInput" rows="6 " cols="50 " name="member_predict_message"></textarea>
+                            <textarea required type="text" onKeyDown="check_input(this.value)" onKeyUp="check_input(this.value)" placeholder="分享你對 0050－元大台灣50 的想法 ... " class="textInput" rows="6 " cols="50 " name="member_predict_message"></textarea>
                             <div class="member_out_btn ">
                                 <div class="member_out_btn_error_text"></div>
 

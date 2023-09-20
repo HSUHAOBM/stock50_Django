@@ -12,6 +12,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.decorators import login_required
 
+from stock.models import Stock
+
+
 # Create your views here.
 class MessageBoardViewSet(viewsets.ModelViewSet):
     queryset = MessageBoard.objects.all()
@@ -25,7 +28,8 @@ def about(request):
     return render(request, 'forum/about.html')
 # 討論
 def forum(request):
-    return render(request, 'forum/forum.html')
+    return_stock_data = Stock.objects.all().order_by('code')
+    return render(request, 'forum/forum.html', {'stock_data': return_stock_data})
 
 
 class HelloView(APIView):

@@ -57,7 +57,7 @@ class Profile(models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default='O', null=True, blank=True)
     address = models.CharField(max_length=255, default="台灣", null=True, blank=True)
     interests = models.CharField(max_length=255, default="無", null=True, blank=True)
-    avatar_url = models.URLField(null=True, blank=True)
+    avatar_url = models.URLField(null=True, blank=True, default="/static/img/peo.png")
     self_intro = models.TextField(default="大家好", null=True, blank=True)
     last_login_ip = models.CharField(max_length=15, null=True, blank=True)
     create_date = models.DateTimeField(auto_now_add=True)
