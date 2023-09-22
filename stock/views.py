@@ -4,8 +4,9 @@ from stock.models import Stock, StockInfo, StockStopDealDate
 from stock.serializers import StockSerializer, StockStopDealDateSerializer, StockInfoSerializer
 
 from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser
 
 from django.http import HttpResponse, JsonResponse
 from django.utils.timezone import now
@@ -100,6 +101,7 @@ def stock_info(request, num):
     return render(request, 'stock/stock_info.html')
 
 # 取得台灣50名單
+@permission_classes([IsAdminUser])
 def get_stock50_list(request):
     # authorization_header = request.META.get("HTTP_TOKEN", "")
     # if authorization_header.startswith("Token"):
@@ -152,6 +154,7 @@ def get_stock50_list(request):
     return JsonResponse(response_data)
 
 # 取得當年股市停止交易的行事曆
+@permission_classes([IsAdminUser])
 def get_stock_stopdeal(request):
     from selenium import webdriver
     from selenium.webdriver.chrome.options import Options
@@ -212,6 +215,7 @@ def get_stock_stopdeal(request):
     return JsonResponse(response_data)
 
 # 取得股票當日最新收盤
+@permission_classes([IsAdminUser])
 def get_stock_info(request, stock_id=None):
     # request.environ['HTTP_HOST']
     get_ok = True

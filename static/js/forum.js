@@ -1,5 +1,6 @@
 // 監聽重複按鍵
 let check_function_end = true;
+
 // 監聽捲動
 let check_onload = true;
 let forum_page = 0;
@@ -72,31 +73,36 @@ let member_predict_data_form = document.getElementById('member_predict_data');
 member_predict_data_form.addEventListener('submit', function(event) {
     if (check_function_end) {
         check_function_end = false
-        var member_predict_data_form_ = new FormData(member_predict_data_form);
+        let member_predict_data_form_ = new FormData(member_predict_data_form);
         let member_predict_form_data = {};
+
         event.preventDefault();
+
         predict_message = member_predict_data_form_.get("member_predict_message")
+
         member_predict_form_data = {
                 "predict_stock": member_predict_data_form_.get("member_predict_stock"),
                 "predict_trend": member_predict_data_form_.get("member_predict_trend"),
                 "predict_message": predict_message,
             }
 
+        let csrfToken = member_predict_data_form_.get("csrfmiddlewaretoken")
+
         if (predict_message.length <= 200) {
-            fetch("/api/message_predict_add", {
+            fetch("/api/forum/", {
                 method: "POST",
                 body: JSON.stringify(member_predict_form_data),
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
                 }
             }).then(function(res) {
                 return res.json();
             }).then(function(result) {
                 if (result.ok) {
-                    console.log(result);
                     window.location.href = window.location.href
                 }
-                if (result.error) {
+                else{
                     document.querySelector('.member_out_btn_error_text').textContent = result.message;
                     check_function_end = true;
                 }
@@ -766,11 +772,8 @@ function member_predict_rank_api_load() {
             }
         }
         document.querySelector('.base_load_gif_forum_rank').style.display = "none";
-
-
-
-    })
-
+    }
+    )
 }
 /*-------------rnak end----------------*/
 

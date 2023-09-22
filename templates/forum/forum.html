@@ -8,11 +8,12 @@
             <div class="main_left">
                 <div class="main_left_top">
                     <form action=" " method="post " id="member_predict_data">
+                        {% csrf_token %}
                         <div class="main_left_top_inputbox">
                             <a class="main_left_top_title"> 預測分享</a>
                             <select class="stock_select_list" onchange="stock_select_change()" name="member_predict_stock">
                                 {% for stock in stock_data %}
-                                    <option value="{{ stock.code }} - {{ stock.name }}">{{ stock.code }} - {{ stock.name }}</option>
+                                    <option value="{{ stock.code }}－{{ stock.name }}">{{ stock.code }} － {{ stock.name }}</option>
                                 {% endfor %}
                             </select>
                             <div class="div_message_btnbox ">

@@ -31,7 +31,6 @@ function load_member_data() {
                 }
                 document.querySelector('.member_main_member_data').style.display = "flex";
                 document.querySelector('.base_load_gif_member_basedata').style.display = "none";
-
             }
 
             // 標題連結處理
@@ -101,10 +100,10 @@ function load_member_data() {
     })
 }
 const member_img_modify = document.querySelector('#image_uploads');
-member_img_modify.addEventListener('change', updata_img_to_ec2_rwd);
+member_img_modify.addEventListener('change', updata_avatar);
 
 // 會員大頭貼修改
-function updata_img_to_ec2_rwd() {
+function updata_avatar() {
 
     var member_data_img_form = new FormData();
     member_data_img_form.append('member_img_modify', member_img_modify.files[0]);

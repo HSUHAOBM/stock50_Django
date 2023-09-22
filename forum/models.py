@@ -5,9 +5,9 @@ from stock.models import Stock
 # 留言
 class MessageBoard(models.Model):
     STOCK_STATUS = [
-        ('-1', '下跌'),
+        ('-1', '跌'),
         ('0', '持平'),
-        ('1', '上漲'),
+        ('1', '漲'),
     ]
     CHECK_STATUS = [
         ('0', '失敗'),
@@ -21,6 +21,7 @@ class MessageBoard(models.Model):
     write_id = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='written_messages')
     create_date = models.DateTimeField(auto_now_add=True)
     write_date = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'message_board'

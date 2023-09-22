@@ -2,7 +2,7 @@ from member.models import Profile
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 
 from member.serializers import UserSerializer
 from django.shortcuts import render
@@ -26,6 +26,7 @@ class UserViewSet(viewsets.ModelViewSet):
     #         self.permission_classes = [IsAuthenticated]
     #     return [permission() for permission in self.permission_classes]
 
+    @permission_classes([IsAdminUser])
     def list(self, request, **kwargs):
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
@@ -154,6 +155,8 @@ class UserViewSet(viewsets.ModelViewSet):
         except Profile.DoesNotExist:
             pass
         return user_data
+
+
 
 def member_forum(request):
     return render(request, 'member/member_forum.html')
