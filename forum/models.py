@@ -23,6 +23,8 @@ class MessageBoard(models.Model):
     write_date = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
 
+    likes = models.ManyToManyField(User, through='MessageBoardLike', related_name='liked_messages', blank=True)
+
     class Meta:
         db_table = 'message_board'
 
@@ -30,9 +32,9 @@ class MessageBoard(models.Model):
         return f"{self.create_id.name} - {self.text}"
 
 class MessageBoardLike(models.Model):
-    message = models.ForeignKey(MessageBoard, on_delete=models.CASCADE, related_name='user_like')
-    create_date = models.DateTimeField(auto_now_add=True)
-    likes = models.ManyToManyField(User, related_name='like_message')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.ForeignKey(MessageBoard, on_delete=models.CASCADE)
+    liked_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'message_board_like'

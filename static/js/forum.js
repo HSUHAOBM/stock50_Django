@@ -363,58 +363,74 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
 // 讀取全部的預測留言
 function member_predict_load_message() {
     check_onload = false;
+    console.log(forum_page)
 
     if (forum_page == 0) {
         document.querySelector('.main_left_center').innerText = ""
     }
-    fetch("/api/message_predict_load?data_number=" + String(forum_page)).then(function(response) {
+
+    fetch("/api/forum/?page=" + String(forum_page)).then(function(response) {
         return response.json();
     }).then(function(result) {
-        console.log(result)
-        if (result.data.nodata) {
+        if (result.length == 0) {
             document.querySelector('.base_load_gif_forum').style.display = "none";
 
-        }
-        if (result.data[0].predict_load) {
+        }else{
+            for (let i = 0; i < result.length; i++) {
 
-            for (let i = 0; i < result.data.length; i++) {
-                predict_stock = result.data[i].stock_id + "－" + result.data[i].stock_name
-                if (result.data[i].predict == "1") {
-                    predict_trend = "漲"
-                }
-                if (result.data[i].predict == "-1") {
-                    predict_trend = "跌"
-                }
-                if (result.data[i].predict == "0") {
-                    predict_trend = "持平"
-                }
-                //會員資料
-                predict_message_member_id = result.data[i].user_id
-                predict_message = result.data[i].message_user_text
-                predict_message_member_name = result.data[i].message_user_name
-                predict_message_member_img_src = result.data[i].message_user_imgsrc
+                predict_stock = result[i].stock.code + "－" + result[i].stock.name
 
-                // 讚
-                login_member_name_good_have = result.data[i].login_member_name_good_have
-                message_good_number = result.data[i].message_good_number
-
-                //回覆
-                message_reply_number = result.data[i].reply_message_number
-                message_reply_data = result.data[i].reply_message_data
-
-                time = result.data[i].message_time
-                time_about = result.data[i].message_time_about
+                predict_trend = {
+                    "1": "漲",
+                    "-1": "跌",
+                    "0": "持平"
+                }.get(result[i].stock_status, "未知")
 
 
-                message_mid = result.data[i].mid
-                message_check_status = result.data[i].message_check_status
-                    // console.log(predict_stock + predict_trend)
-                member_predict_add_message(predict_message_member_id, predict_stock, predict_trend, predict_message, predict_message_member_name, predict_message_member_img_src, time, time_about, message_mid, message_check_status, login_member_name_good_have, message_good_number, message_reply_number, message_reply_data)
+                console.log(predict_stock + "," + predict_trend)
 
             }
-            document.querySelector('.base_load_gif_forum').style.display = "none";
-            check_onload = true;
         }
+        // if (result.data[0].predict_load) {
+
+        //     for (let i = 0; i < result.data.length; i++) {
+        //         predict_stock = result.data[i].stock_id + "－" + result.data[i].stock_name
+        //         if (result.data[i].predict == "1") {
+        //             predict_trend = "漲"
+        //         }
+        //         if (result.data[i].predict == "-1") {
+        //             predict_trend = "跌"
+        //         }
+        //         if (result.data[i].predict == "0") {
+        //             predict_trend = "持平"
+        //         }
+        //         //會員資料
+        //         predict_message_member_id = result.data[i].user_id
+        //         predict_message = result.data[i].message_user_text
+        //         predict_message_member_name = result.data[i].message_user_name
+        //         predict_message_member_img_src = result.data[i].message_user_imgsrc
+
+        //         // 讚
+        //         login_member_name_good_have = result.data[i].login_member_name_good_have
+        //         message_good_number = result.data[i].message_good_number
+
+        //         //回覆
+        //         message_reply_number = result.data[i].reply_message_number
+        //         message_reply_data = result.data[i].reply_message_data
+
+        //         time = result.data[i].message_time
+        //         time_about = result.data[i].message_time_about
+
+
+        //         message_mid = result.data[i].mid
+        //         message_check_status = result.data[i].message_check_status
+        //             // console.log(predict_stock + predict_trend)
+        //         member_predict_add_message(predict_message_member_id, predict_stock, predict_trend, predict_message, predict_message_member_name, predict_message_member_img_src, time, time_about, message_mid, message_check_status, login_member_name_good_have, message_good_number, message_reply_number, message_reply_data)
+
+        //     }
+        //     document.querySelector('.base_load_gif_forum').style.display = "none";
+        //     check_onload = true;
+        // }
 
     })
 
@@ -803,6 +819,8 @@ function administrator_delete_predict(mid, member_user_id) {
 }
 
 function init() {
-    member_predict_rank_api_load()
+    // member_predict_rank_api_load()
     member_predict_load_message()
 }
+
+init()

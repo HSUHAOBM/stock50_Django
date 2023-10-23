@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.db.models import F
 
 # Create your views here.
 from forum.models import MessageBoard
@@ -26,6 +27,7 @@ class MessageBoardViewSet(viewsets.ModelViewSet):
     parser_classes = (JSONParser,)
     permission_classes = [IsAuthenticated]
 
+    # 留言建立
     def create(self, request, **kwargs):
         stock = request.data.get("predict_stock")
         stock_code = stock.split("－")[0]
@@ -33,9 +35,9 @@ class MessageBoardViewSet(viewsets.ModelViewSet):
         message = request.data.get("predict_message")
 
         if len(message.strip()) == 0:
-            return {"ok": False, "message": "檢查輸入是否為空白!"}
+            return Response({"ok": False, "message": "檢查輸入是否為空白"}, status=status.HTTP_401_UNAUTHORIZED)
         elif(len(message) > 200):
-            return {"ok": False, "message": "留言字數超過 200"}
+            return Response({"ok": False, "message": "留言字數超過 200"}, status=status.HTTP_401_UNAUTHORIZED)
 
         if(trend == "漲"):
             trend = "1"
@@ -47,6 +49,7 @@ class MessageBoardViewSet(viewsets.ModelViewSet):
         stock_instance = Stock.objects.get(code=stock_code)
 
         print("現在時間為：", timezone.localtime().strftime("%Y-%m-%d %H:%M:%S"))
+
         # 檢查時間
         if is_between_1_to_2_pm():
             return Response({"ok": False, "message": "為公平起見，下午13時至14時，不能新增留言。"}, status=status.HTTP_401_UNAUTHORIZED)
@@ -70,6 +73,34 @@ class MessageBoardViewSet(viewsets.ModelViewSet):
             write_id=user
         )
         return Response({"ok": True, "mid" : message.id, "time":datetime.now().strftime('%Y-%m-%d %H:%M:%S') }, status=status.HTTP_401_UNAUTHORIZED)
+
+    def list(self,request, **kwargs):
+        # 使用者
+        user_id = request.query_params.get("user_id", None)
+        # 股票
+        stock_id = request.query_params.get("stock_id", None)
+        # 頁數, 1 頁 有 10 筆
+        page = int(request.query_params.get("page", 0))
+        records_per_page = 10
+        offset = page * records_per_page
+
+        # 條件
+        conditions = {}
+
+        # 指定用户
+        if user_id:
+            conditions["create_id"] = user_id
+
+        # 指定股票
+        if stock_id:
+            conditions["stock"] = stock_id
+
+        # conditions = 空, 全取
+        message_board = MessageBoard.objects.filter(**conditions).order_by('-create_date')[offset:offset + records_per_page]
+
+        serializer = MessageBoardSerializer(message_board, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 # 首頁
 def main(request):

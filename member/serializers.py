@@ -20,3 +20,11 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True}
         }
+
+
+class UserBoardSerializer(serializers.ModelSerializer):
+    avatar_url = serializers.CharField(source='profile.avatar_url', read_only=True)
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'avatar_url')
+

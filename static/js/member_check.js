@@ -51,7 +51,7 @@ function load_member_data() {
     }).then(function(res) {
         return res.json();
     }).then(function(result) {
-        console.log(result)
+        // console.log(result)
         if (result.ok) {
 
             head_right_login.style.display = "flex";
