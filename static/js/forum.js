@@ -13,7 +13,7 @@ function stock_select_change() {
     let index = stock_select_textContent.selectedIndex
     let stock_select_out_text = stock_select_textContent.options[index].text
 
-    document.querySelector('.member_out_stock.name').href = "stock_info?stock_id=" + stock_select_out_text.split("－")[0]
+    document.querySelector('.member_out_stock.name').href = "stock_info/" + stock_select_out_text.split("－")[0]
     document.querySelector('.member_out_stock.name').textContent = stock_select_out_text;
     document.querySelector('.member_out_text').style.display = "flex";
     document.querySelector('.textInput').placeholder = "分享你對 " + stock_select_out_text + " 的想法 ...";
@@ -141,11 +141,11 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
     }
     if (message_check_status == "1") {
 
-        imgdiv_predict_message_box_result.src="{% static 'img/index_success.png' %}";
+        imgdiv_predict_message_box_result.src="static/img/index_success.png";
         imgdiv_predict_message_box_result.style.opacity = "0.55";
     }
     if (message_check_status == "-1") {
-        imgdiv_predict_message_box_result.src="{% static 'img/index_fail.png' %}";
+        imgdiv_predict_message_box_result.src="static/img/index_fail.png";
         imgdiv_predict_message_box_result.style.opacity = "0.55";
     }
     div_predict_message_box_result.appendChild(imgdiv_predict_message_box_result)
@@ -172,7 +172,7 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
     div_predict_message_box.appendChild(div_delete_predict_message)
 
     let img_delete_predict_message = document.createElement("img");
-    img_delete_predict_message.src = "{% static 'img/delete.png' %}";
+    img_delete_predict_message.src = "/static/img/delete.png";
     div_delete_predict_message.appendChild(img_delete_predict_message)
 
     // 討論-會員大頭貼
@@ -273,7 +273,7 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
         div_message_box_btn_like.appendChild(a_div_message_box_btn_like)
 
         let img_div_message_box_btn_like = document.createElement("img")
-        img_div_message_box_btn_like.src = "img/likeA.png"
+        img_div_message_box_btn_like.src = "static/img/likeA.png"
         div_message_box_btn_like.appendChild(img_div_message_box_btn_like)
     } else {
         div_message_box_btn_like.onclick = function() {
@@ -289,7 +289,7 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
         div_message_box_btn_like.appendChild(a_div_message_box_btn_like)
 
         let img_div_message_box_btn_like = document.createElement("img")
-        img_div_message_box_btn_like.src = "img/likeB.png"
+        img_div_message_box_btn_like.src = "static/img/likeB.png"
         div_message_box_btn_like.appendChild(img_div_message_box_btn_like)
     }
 
@@ -311,7 +311,7 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
 
     let img_div_message_box_btn_message = document.createElement("img")
     img_div_message_box_btn_message.className = "img_div_message_box_btn_message " + message_mid
-    img_div_message_box_btn_message.src = "img/chat.png"
+    img_div_message_box_btn_message.src = "static/img/chat.png"
     div_message_box_btn_message.appendChild(img_div_message_box_btn_message)
 
     // 討論-底-按鈕區-回覆留言-回應
@@ -319,11 +319,28 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
     div_message_box_other_message.className = "message_box_other_message " + message_mid
     div_predict_message.appendChild(div_message_box_other_message)
 
-    if (message_reply_data.data) {
+    if (message_reply_data.length > 0) {
         // console.log(message_reply_data.message_predict_reply_load_data);
-        for (let i = 0; i < message_reply_data.message_predict_reply_load_data.length; i++) {
-            message_reply_data_ = message_reply_data.message_predict_reply_load_data[i]
-            box_other_write_message_reply_add(message_reply_data_.message_reply_user_id, message_reply_data_.message_mid, message_reply_data_.message_reply_mid, message_reply_data_.message_reply_user_imgsrc, message_reply_data_.message_reply_user_name, message_reply_data_.message_reply_text, message_reply_data_.message_reply_time, message_reply_data_.message_reply_time_about)
+        for (let i = 0; i < message_reply_data.length; i++) {
+            reply_data = message_reply_data[i]
+            reply_user_id = reply_data.create_id.id
+            reply_message_mid = "mid_"+reply_data.message
+            reply_message_mid_sub = reply_message_mid + "_" + reply_data.id
+            reply_user_img = reply_data.create_id.avatar_url
+            reply_user_name = reply_data.create_id.username
+            reply_message_text = reply_data.text
+            reply_message_time = reply_data.create_date
+            reply_message_time_about = timeAgo(reply_data.create_date)
+
+            box_other_write_message_reply_add(
+                reply_user_id,
+                reply_message_mid,
+                reply_message_mid_sub,
+                reply_user_img,
+                reply_user_name,
+                reply_message_text,
+                reply_message_time,
+                reply_message_time_about)
         }
     }
 
@@ -343,7 +360,7 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
 
 
     let img_message_box_other_message_write = document.createElement("img")
-    img_message_box_other_message_write.src = "img/sent.png "
+    img_message_box_other_message_write.src = "static/img/sent.png "
     img_message_box_other_message_write.setAttribute("alt", message_mid)
 
     img_message_box_other_message_write.onclick = function() {
@@ -363,7 +380,7 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
 // 讀取全部的預測留言
 function member_predict_load_message() {
     check_onload = false;
-    console.log(forum_page)
+    console.log("page:" + forum_page)
 
     if (forum_page == 0) {
         document.querySelector('.main_left_center').innerText = ""
@@ -377,100 +394,117 @@ function member_predict_load_message() {
 
         }else{
             for (let i = 0; i < result.length; i++) {
-
+                // stock
                 predict_stock = result[i].stock.code + "－" + result[i].stock.name
-
-                predict_trend = {
+                // 預測
+                var predict_trend = {
                     "1": "漲",
                     "-1": "跌",
                     "0": "持平"
-                }.get(result[i].stock_status, "未知")
+                }[result[i].stock_status] || "未知";
 
+                // 發文者
+                predict_message_member_id = result[i].create_id.id
+                predict_message_member_name = result[i].create_id.username
+                predict_message_member_img_src = result[i].create_id.avatar_url
 
-                console.log(predict_stock + "," + predict_trend)
+                // 文字
+                predict_message = result[i].text
 
+                // 登入者有無讚, 讚數
+                login_member_name_good_have = result[i].likes.length > 0 ? true : false;
+                message_good_number = result[i].likes.length
+
+                // 回覆數,留言資料
+                message_reply_number = result[i].replies.length
+                message_reply_data = result[i].replies
+
+                // 發文時間
+                time = result[i].create_date
+                time_about = timeAgo(result[i].create_date)
+
+                message_mid = "mid_"+result[i].id
+                message_check_status = result[i].stock_status
+
+                // console.log(predict_stock + "," + predict_trend)
+                // console.log(predict_message_member_id + "," + predict_message_member_name)
+                // console.log(predict_message_member_img_src + "," + predict_message)
+                // console.log(login_member_name_good_have + "," + message_good_number)
+                // console.log(message_reply_number + "," + message_reply_data)
+                // console.log(time + "," + time_about)
+                member_predict_add_message(predict_message_member_id,
+                    predict_stock, predict_trend, predict_message,
+                    predict_message_member_name, predict_message_member_img_src,
+                    time, time_about, message_mid, message_check_status,
+                    login_member_name_good_have, message_good_number,
+                    message_reply_number, message_reply_data)
             }
+            document.querySelector('.base_load_gif_forum').style.display = "none";
+            check_onload = true;
         }
-        // if (result.data[0].predict_load) {
-
-        //     for (let i = 0; i < result.data.length; i++) {
-        //         predict_stock = result.data[i].stock_id + "－" + result.data[i].stock_name
-        //         if (result.data[i].predict == "1") {
-        //             predict_trend = "漲"
-        //         }
-        //         if (result.data[i].predict == "-1") {
-        //             predict_trend = "跌"
-        //         }
-        //         if (result.data[i].predict == "0") {
-        //             predict_trend = "持平"
-        //         }
-        //         //會員資料
-        //         predict_message_member_id = result.data[i].user_id
-        //         predict_message = result.data[i].message_user_text
-        //         predict_message_member_name = result.data[i].message_user_name
-        //         predict_message_member_img_src = result.data[i].message_user_imgsrc
-
-        //         // 讚
-        //         login_member_name_good_have = result.data[i].login_member_name_good_have
-        //         message_good_number = result.data[i].message_good_number
-
-        //         //回覆
-        //         message_reply_number = result.data[i].reply_message_number
-        //         message_reply_data = result.data[i].reply_message_data
-
-        //         time = result.data[i].message_time
-        //         time_about = result.data[i].message_time_about
-
-
-        //         message_mid = result.data[i].mid
-        //         message_check_status = result.data[i].message_check_status
-        //             // console.log(predict_stock + predict_trend)
-        //         member_predict_add_message(predict_message_member_id, predict_stock, predict_trend, predict_message, predict_message_member_name, predict_message_member_img_src, time, time_about, message_mid, message_check_status, login_member_name_good_have, message_good_number, message_reply_number, message_reply_data)
-
-        //     }
-        //     document.querySelector('.base_load_gif_forum').style.display = "none";
-        //     check_onload = true;
-        // }
-
-    })
-
-
+    }
+    )
 }
 
+// 將時間轉換成XXX前
+function timeAgo(timeAgo) {
+    const now = new Date();
+    const sentTime = new Date(timeAgo);
+
+    const timeDifference = now - sentTime;
+    const { days, hours, minutes } = daysHoursMinutes(timeDifference);
+
+    if (days !== 0) {
+        return days + " 天前";
+    }
+    if (hours !== 0) {
+        return hours + " 小時前";
+    }
+    if (minutes !== 0) {
+        return minutes + " 分鐘前";
+    } else {
+        return "剛剛";
+    }
+}
+
+function daysHoursMinutes(ms) {
+    const minutes = Math.floor(ms / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    return { days, hours, minutes };
+}
 
 /*-----------------------------*/
 // 新增讚
 function predict_message_btn_enter_like(message_mid_like, message_member) {
+    let csrftoken = Cookies.get('csrftoken');
+
     if (check_function_end) {
         check_function_end = false
         let message_mid_like_data = {
             "status": "like",
-            "login_member_name": login_member_name,
-            "login_member_email": login_member_email,
             "message_mid_like": message_mid_like,
             "message_member": message_member
         }
-        fetch("/api/message_predict_like", {
+
+        fetch("/api/forum/like/", {
                 method: 'POST',
                 body: JSON.stringify(message_mid_like_data),
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
                 }
             })
             .then(res => {
                 return res.json();
             })
             .then(result => {
-                // console.log(result);
                 if (result.ok) {
-
-
-                    document.querySelector('#' + message_mid_like + ">img").src = "img/likeA.png";
+                    document.querySelector('#' + message_mid_like + ">img").src = "static/img/likeA.png";
 
                     document.querySelector('#' + message_mid_like).onclick = function() {
                         predict_message_btn_enter_unlike(message_mid_like)
-
-
                     }
                     let good_int = parseInt(document.querySelector('#' + message_mid_like + ">a").textContent.split('讚 (')[1].split(')')[0]) + 1
                     let good_str = good_int.toString()
@@ -483,19 +517,20 @@ function predict_message_btn_enter_like(message_mid_like, message_member) {
 }
 // 解除讚
 function predict_message_btn_enter_unlike(message_mid_like) {
+    let csrftoken = Cookies.get('csrftoken');
+
     if (check_function_end) {
         check_function_end = false
         let message_mid_like_data = {
             "status": "unlike",
-            "login_member_name": login_member_name,
-            "login_member_email": login_member_email,
             "message_mid_like": message_mid_like
         }
-        fetch("/api/message_predict_like", {
+        fetch("/api/forum/like/", {
                 method: 'POST',
                 body: JSON.stringify(message_mid_like_data),
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
                 }
             })
             .then(res => {
@@ -505,7 +540,7 @@ function predict_message_btn_enter_unlike(message_mid_like) {
                 // console.log(result);
                 if (result.ok) {
 
-                    document.querySelector('#' + message_mid_like + ">img").src = "img/likeB.png"
+                    document.querySelector('#' + message_mid_like + ">img").src = "static/img/likeB.png"
 
                     document.querySelector('#' + message_mid_like).onclick = function() {
                         let message_mid = this.getAttribute('alt');
@@ -532,7 +567,7 @@ function message_box_other_message_load_diplay_flex(message_mid) {
     document.querySelector('.message_box_btn_message.' + message_mid).onclick = function() {
         message_box_other_message_load_diplay_none(message_mid)
     }
-    document.querySelector('.img_div_message_box_btn_message.' + message_mid).src = "img/chat_.png"
+    document.querySelector('.img_div_message_box_btn_message.' + message_mid).src = "static/img/chat_.png"
 }
 
 function message_box_other_message_load_diplay_none(message_mid) {
@@ -540,43 +575,43 @@ function message_box_other_message_load_diplay_none(message_mid) {
     document.querySelector('.message_box_btn_message.' + message_mid).onclick = function() {
         message_box_other_message_load_diplay_flex(message_mid)
     }
-    document.querySelector('.img_div_message_box_btn_message.' + message_mid).src = "img/chat.png"
+    document.querySelector('.img_div_message_box_btn_message.' + message_mid).src = "static/img/chat.png"
 }
 
 // 傳送留言的回覆
 function box_other_write_message_reply(message_mid) {
+    let csrftoken = Cookies.get('csrftoken');
+
     if (check_function_end) {
         check_function_end = false
 
         let message_reply_text = document.querySelector('.textarea_message_box_other_message_write.' + message_mid).value;
         let box_other_write_message_reply_data = {
-            "login_member_name": login_member_name,
-            "login_member_img_src": login_member_img_src,
-            "login_member_email": login_member_email,
             "message_mid": message_mid,
             "message_reply_text": message_reply_text
         }
 
-
-
         if (message_reply_text.length <= 50) {
 
-            fetch("/api/message_predict_reply_add", {
+            fetch("/api/forum_reply/", {
                     method: 'POST',
-                    // body: encodeURI(JSON.stringify(data)),
                     body: JSON.stringify(box_other_write_message_reply_data),
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
                     }
                 })
                 .then(res => {
                     return res.json();
                 })
                 .then(result => {
+
                     if (result.ok) {
 
+                        const formattedDateTime = new Date().toLocaleString();
 
-                        box_other_write_message_reply_add(login_member_id, result.mid, result.mid_reply, login_member_img_src, login_member_name, message_reply_text, result.time, "剛剛");
+
+                        box_other_write_message_reply_add(login_member_id, message_mid, message_mid + "_" + result.reply_id, login_member_img_src, login_member_name, message_reply_text, formattedDateTime, "剛剛");
                         document.querySelector('.textarea_message_box_other_message_write.' + message_mid).value = "";
 
                         "a_div_message_box_btn_message_" + message_reply_number
@@ -588,8 +623,7 @@ function box_other_write_message_reply(message_mid) {
 
                         check_function_end = true
 
-                    }
-                    if (result.error) {
+                    }else {
                         document.querySelector('.message_box_text_btn_error_text.' + message_mid).style.display = "flex";
                         document.querySelector('.message_box_text_btn_error_text.' + message_mid).textContent = result.message;
                         check_function_end = true
@@ -608,12 +642,12 @@ function box_other_write_message_reply_add(user_id, message_mid, reply_message_m
     let div_message_box_other_message = document.querySelector('.message_box_other_message.' + message_mid);
     let div_message_box_other_message_load = document.createElement("div");
     div_message_box_other_message_load.className = "message_box_other_message_load " + reply_message_mid;
-
+    console.log(div_message_box_other_message.firstChild)
     if (div_message_box_other_message.firstChild == null) {
 
         div_message_box_other_message.appendChild(div_message_box_other_message_load)
     } else {
-
+        console.log('-------------------')
         div_message_box_other_message.insertBefore(div_message_box_other_message_load, div_message_box_other_message.childNodes[0]);
     }
 
@@ -635,7 +669,7 @@ function box_other_write_message_reply_add(user_id, message_mid, reply_message_m
     let a_message_box_other_message_load_right_name = document.createElement("a")
     a_message_box_other_message_load_right_name.className = "message_box_other_message_load_right_name"
     a_message_box_other_message_load_right_name.textContent = reply_member_name
-    a_message_box_other_message_load_right_name.setAttribute("href", "/member_forum?name=" + user_id)
+    a_message_box_other_message_load_right_name.setAttribute("href", "/member_forum?name=" + reply_member_name)
     div_message_box_other_message_load_right.appendChild(a_message_box_other_message_load_right_name)
 
     // 文字
@@ -804,7 +838,8 @@ function administrator_delete_predict(mid, member_user_id) {
             method: 'DELETE',
             body: JSON.stringify(delete_predict),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                // 'X-CSRFToken': csrfToken,
             }
         })
         .then(res => {

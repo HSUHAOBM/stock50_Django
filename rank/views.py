@@ -6,6 +6,7 @@ from forum.models import MessageBoard
 from forum.serializers import MessageBoardSerializer
 
 from rest_framework import viewsets
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -14,6 +15,7 @@ class MessageBoardViewSet(viewsets.ModelViewSet):
     serializer_class = MessageBoardSerializer
 
 # 排行
+@login_required
 def rank(request):
     return render(request, 'rank/index.html')
 

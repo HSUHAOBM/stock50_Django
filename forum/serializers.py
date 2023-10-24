@@ -5,6 +5,7 @@ from stock.serializers import StockSerializer
 
 class MessageBoardReplySerializer(serializers.ModelSerializer):
     create_id = UserBoardSerializer()
+    create_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
 
     class Meta:
         model = MessageBoardReply
@@ -15,6 +16,9 @@ class MessageBoardSerializer(serializers.ModelSerializer):
     stock = StockSerializer()
     replies = MessageBoardReplySerializer(many=True)  # 嵌套序列化 MessageBoardReply
     likes = UserBoardSerializer(many=True)
+    create_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+
     class Meta:
         model = MessageBoard
         fields = '__all__'
+

@@ -18,14 +18,15 @@ from django.contrib import admin
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 from member.views import UserViewSet
-from forum.views import MessageBoardViewSet
-from stock.views import StockBoardViewSet, StockStopDealDateBoardViewSet
+from forum.views import MessageBoardViewSet, MessageBoardReplyViewSet
+from stock.views import StockBoardViewSet
 from rest_framework.authtoken import views
 
 router = DefaultRouter()
 router.register('User', UserViewSet)
 router.register('forum', MessageBoardViewSet)
 router.register('stock', StockBoardViewSet)
+router.register('forum_reply', MessageBoardReplyViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

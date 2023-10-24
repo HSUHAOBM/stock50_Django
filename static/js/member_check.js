@@ -47,11 +47,11 @@ function logout() {
 // 目前登入的會員詳細資料讀取
 function load_member_data() {
     fetch("/api/User/check/", {
-        method: 'GET'
+        method: "GET"
     }).then(function(res) {
         return res.json();
     }).then(function(result) {
-        // console.log(result)
+        console.log(result)
         if (result.ok) {
 
             head_right_login.style.display = "flex";
@@ -104,7 +104,7 @@ function load_member_data() {
                 login_member_level = true;
             }
         }else{
-            // location.href = '/'
+            // location.href = "/"
         }
     })
 }

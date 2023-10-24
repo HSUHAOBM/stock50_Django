@@ -4,14 +4,15 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import F
 
 # Create your views here.
-from forum.models import MessageBoard
-from forum.serializers import MessageBoardSerializer
+from forum.models import MessageBoard, MessageBoardReply
+from forum.serializers import MessageBoardSerializer, MessageBoardReplySerializer
 
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import JSONParser
+from rest_framework.decorators import action, api_view, permission_classes
 
 from django.contrib.auth.decorators import login_required
 
@@ -97,10 +98,35 @@ class MessageBoardViewSet(viewsets.ModelViewSet):
 
         # conditions = 空, 全取
         message_board = MessageBoard.objects.filter(**conditions).order_by('-create_date')[offset:offset + records_per_page]
-
         serializer = MessageBoardSerializer(message_board, many=True)
 
+        # 登入者 // 並判斷有無按讚
+        current_user = request.user
+        for item in serializer.data:
+            item['current_user_likes'] = MessageBoard.objects.filter(pk=item['id'], likes=current_user).exists()
+
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    # 讚新增與取消 /api/forum/like/
+    @action(detail=False, methods=['POST'])
+    def like(self, request):
+
+        user = request.user
+
+        message_id = request.data.get("message_mid_like")
+        message_id = message_id.split("mid_")[-1]
+        message_like = request.data.get("status")
+
+        maessage = MessageBoard.objects.get(pk=message_id)
+
+        if message_like == "like":
+            maessage.likes.add(user)
+        else:
+            maessage.likes.remove(user)
+
+        return Response({"ok": True, "message": f"{message_like}成功"}, status=status.HTTP_201_CREATED)
+
 
 # 首頁
 def main(request):
@@ -109,6 +135,7 @@ def main(request):
 def about(request):
     return render(request, "forum/about.html")
 # 討論
+@login_required
 def forum(request):
     return_stock_data = Stock.objects.all().order_by("code")
     return render(request, "forum/forum.html", {"stock_data": return_stock_data})
@@ -125,8 +152,37 @@ class HelloView(APIView):
 #     print(request.user.is_authenticated)
 #     return JsonResponse({"message": "用戶有有效的tokenen}"})
 
+class MessageBoardReplyViewSet(viewsets.ModelViewSet):
+    queryset = MessageBoardReply.objects.all().order_by('-create_date')
+    serializer_class = MessageBoardReplySerializer
+    parser_classes = (JSONParser,)
+    permission_classes = [IsAuthenticated]
+
+    # 留言回覆建立
+    def create(self, request, **kwargs):
+        message_id = request.data.get("message_mid")
+        message_id = message_id.split("mid_")[-1]
+
+        message_text = request.data.get("message_reply_text")
+
+        if len(message_text.strip()) == 0:
+            return Response({"ok": False, "message": "檢查輸入是否為空白"}, status=status.HTTP_401_UNAUTHORIZED)
+        elif(len(message_text) > 50):
+            return Response({"ok": False, "message": "留言字數超過 50"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
+        maessage = MessageBoard.objects.get(pk=message_id)
+        current_user = request.user
+        maessage_reply = MessageBoardReply.objects.create(message=maessage, text=message_text, create_id=current_user)
+        # maessage_reply = MessageBoardReply()
+        # maessage_reply.message = maessage
+        # maessage_reply.text = message_text
+        # maessage_reply.create_id = current_user
+        # maessage_reply.save()
+        return Response({"ok": True, "message": "留言回复成功", "reply_id" : maessage_reply.id}, status=status.HTTP_201_CREATED)
+
+
+# 留言資格判斷
 def is_deal_date_today():
     today = timezone.localdate()
     is_weekend = today.weekday() in [5, 6]

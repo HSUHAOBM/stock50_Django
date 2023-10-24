@@ -157,16 +157,19 @@ class UserViewSet(viewsets.ModelViewSet):
         return user_data
 
 
-
+@login_required
 def member_forum(request):
     return render(request, 'member/member_forum.html')
 
+@login_required
 def member_profile(request):
     return render(request, 'member/member_profile.html')
 
+@login_required
 def member_rank(request):
     return render(request, 'member/member_rank.html')
 
+@login_required
 def member_private(request):
     return render(request, 'member/member_private.html')
 
