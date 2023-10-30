@@ -95,17 +95,25 @@
         </div>
 
         <div class="stock_info_title ">預測留言</div>
+        <div class="main_left_center ">
+        </div>
 
-        <div class="stock_data_not_have">
-            <img src="{% static 'img/nodata.png' %} " />
+        <div class="base_load_gif_forum">
+            <div class="stock_data_not_have">
                 <div class="stock_data_not_have_text">
                 <p>目前還沒有人預測!</p>
                 <p class="stock_data_not_have_text_other">
                     <a>趕快到</a>
                     <a class="stock_data_not_have_text_link" href="/forum">預測股市</a>
                     <a>，發布預測吧！</a></p>
+                </div>
             </div>
         </div>
+<!--
+        <div class="base_load_gif_forum">
+            <img src="{% static 'gif/ajax-loader.gif' %}">
+        </div> -->
+
         <div class="member_main_member_databydb predict ">
             <!-- <div class="predict_message_box">
                 <div class="predict_message_box_result"><img src=""></div>
@@ -133,11 +141,10 @@
                 </div>
             </div> -->
         </div>
-        <div class="base_load_gif_stock_info load_message ">
-            <img src="{% static 'gif/ajax-loader2.gif' %}">
-        </div>
+
     </div>
 </div>
-<script src="{% static 'js/stock_info.js' %}"></script>
+<!-- <script src="{% static 'js/stock_info.js' %}"></script> -->
+<script src="{% static 'js/message_load.js' %}"></script>
 
 {% endblock %}

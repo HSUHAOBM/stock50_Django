@@ -5,7 +5,8 @@ let login_member_id = "";
 let login_member_img_src = "";
 let login_member_level = false
 
-
+// 監聽重複按鍵
+let check_function_end = true;
 
 let head_right_logout = document.querySelector('.head_right.logout');
 let head_right_login = document.querySelector('.head_right.login');

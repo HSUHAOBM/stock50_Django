@@ -895,8 +895,9 @@ function administrator_delete_predict(mid, member_user_id) {
 /*-----------------------------*/
 
 function init() {
-    member_predict_load_message_stock_info()
+    // 會員排行
+    // member_predict_load_message_stock_info()
+    // 讀取股票資訊
     stock_data_load()
-    member_predict_load_message()
 }
 init()

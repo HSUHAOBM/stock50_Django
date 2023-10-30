@@ -77,7 +77,7 @@ class MessageBoardViewSet(viewsets.ModelViewSet):
 
     def list(self,request, **kwargs):
         # 使用者
-        user_id = request.query_params.get("user_id", None)
+        user_name = request.query_params.get("user_name", None)
         # 股票
         stock_id = request.query_params.get("stock_id", None)
         # 頁數, 1 頁 有 10 筆
@@ -89,12 +89,13 @@ class MessageBoardViewSet(viewsets.ModelViewSet):
         conditions = {}
 
         # 指定用户
-        if user_id:
-            conditions["create_id"] = user_id
+        if user_name:
+            # 如果提供了用户名，根据用户名过滤留言数据
+            conditions["create_id__username"] = user_name
 
         # 指定股票
         if stock_id:
-            conditions["stock"] = stock_id
+            conditions["stock__code"] = stock_id
 
         # conditions = 空, 全取
         message_board = MessageBoard.objects.filter(**conditions).order_by('-create_date')[offset:offset + records_per_page]
