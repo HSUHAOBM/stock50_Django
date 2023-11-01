@@ -86,7 +86,7 @@ function load_member_data() {
                     document.querySelector('.main_right_memberdata.rate').textContent = "勝率：" + result.rank_total.rate + " %";
                     document.querySelector('.main_right_memberdata.success').textContent = "成功：" + result.rank_total.win + " 次";
                     document.querySelector('.main_right_memberdata.fail').textContent = "失敗：" + result.rank_total.fail + " 次";
-                    document.querySelector('.main_right_memberdata.message').textContent = "預測：" + result.rank_total.total + " 次";
+                    document.querySelector('.main_right_memberdata.message').textContent = "發佈：" + result.rank_total.total + " 次";
                     document.querySelector('.main_right_memberdata.like').textContent = "讚：" + result.like_total_number + " 個";
 
                 }

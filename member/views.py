@@ -4,22 +4,27 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 
-from member.serializers import UserSerializer
+from member.serializers import UserSerializer, ProfileSerializer
 from django.shortcuts import render
 
 from rest_framework import viewsets, status
-from rest_framework.parsers import JSONParser
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
+
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 
+import os
+import uuid
+from django.conf import settings
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     # permission_classes = (IsAuthenticated,)
-    parser_classes = (JSONParser,)
+    parser_classes = (JSONParser, MultiPartParser, FormParser)
 
     # def get_permissions(self):
     #     if self.action in ('create',):
@@ -156,6 +161,96 @@ class UserViewSet(viewsets.ModelViewSet):
             pass
         return user_data
 
+    # 個人資料修改 /api/User/member_profile/
+    @permission_classes([IsAuthenticated])
+    @action(detail=False, methods=['post'])
+    def member_profile(self, request):
+        user = request.user
+        if not request.user.is_authenticated:
+            return Response({"ok": False, "message": "無登入!"}, status=status.HTTP_401_OK)
+
+        modify_name = request.data.get("name")
+
+        modify_address = request.data.get("address")
+        modify_birthday = request.data.get("birthday")
+        modify_gender = request.data.get("gender")
+
+        modify_gender = request.data.get("gender")
+        if modify_gender == "Male":
+            modify_gender = "M"
+        elif modify_gender == "Female":
+            modify_gender = "F"
+        elif modify_gender == "Other":
+            modify_gender = "O"
+
+        modify_interests = request.data.get("interests")
+        modify_introduction = request.data.get("introduction")
+
+        # 姓名驗證
+        if not modify_name:
+            return Response({"ok": False, "message": "姓名不能空。"}, status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.exclude(pk=user.pk).filter(username=modify_name).exists():
+            return Response({"ok": False, "message": "該暱稱已被使用。"}, status=status.HTTP_400_BAD_REQUEST)
+        if len(modify_name) > 20:
+            return Response({"ok": False, "message": "姓名超過20個字。"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # 用户的 Profile
+            profile = user.profile
+
+            # 更新 Profile
+            user.username = modify_name
+            profile.address = modify_address
+            profile.birthday = modify_birthday
+            profile.gender = modify_gender
+            profile.interests = modify_interests
+            profile.self_intro = modify_introduction
+
+            # 保存
+            profile.save()
+            user.save()
+            serializer = ProfileSerializer(profile)
+            return Response({"ok": True, "message": "更新成功", "profile": serializer.data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"ok": False, "message": f"更新失败: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # 個人大頭貼修改 /api/User/member_profile_img/
+    @permission_classes([IsAuthenticated])
+    @action(detail=False, methods=['post'])
+    def member_profile_img(self, request):
+        user = request.user
+
+        if request.method == "POST":
+            try:
+                file = request.FILES['member_img_modify']
+
+                if file and allowed_file(file.name):
+                    file_extension = os.path.splitext(file.name)[-1]
+                    new_filename = f"{uuid.uuid4()}_avatar{file_extension}"
+                    file_path = os.path.join(settings.MEDIA_ROOT, 'avatars', new_filename)
+
+                    # 保存文件
+                    with open(file_path, 'wb') as dest_file:
+                        for chunk in file.chunks():
+                            dest_file.write(chunk)
+
+                    if not os.path.exists(file_path):
+                        os.makedirs(file_path)
+
+                    if user.profile.avatar_url != "/static/img/peo.png":
+                        old_avatar_path = os.path.join(settings.MEDIA_ROOT, user.profile.avatar_url[7:])  # 去掉路径中的 "/media/"
+                        if os.path.exists(old_avatar_path):
+                            os.remove(old_avatar_path)
+
+                    user.profile.avatar_url = f"/media/avatars/{new_filename}"
+                    user.profile.save()
+                    user.save()
+
+                    return Response({"ok": True, "message": "更新成功"}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({"ok": False, "message": "更新失败"}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"ok": False, "message": "請選擇圖片"}, status=status.HTTP_400_BAD_REQUEST)
 
 @login_required
 def member_forum(request):
@@ -183,3 +278,10 @@ def member_sigin(request):
         return render(request, 'member/member_sigin.html')
     else:
         return render(request, 'forum/forum.html')
+
+
+
+# 頭貼判斷格式
+def allowed_file(filename):
+    ALLOW_EXTENSIONS = ['png', 'jpg', 'jpeg']
+    return '.' in filename and filename.rsplit('.', 1)[-1] in ALLOW_EXTENSIONS

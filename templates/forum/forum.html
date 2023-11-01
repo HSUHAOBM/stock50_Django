@@ -10,7 +10,7 @@
                     <form action=" " method="post " id="member_predict_data">
                         {% csrf_token %}
                         <div class="main_left_top_inputbox">
-                            <a class="main_left_top_title"> 預測分享</a>
+                            <a class="main_left_top_title"> 討論分享</a>
                             <select class="stock_select_list" onchange="stock_select_change()" name="member_predict_stock">
                                 {% for stock in stock_data %}
                                     <option value="{{ stock.code }}－{{ stock.name }}">{{ stock.code }} － {{ stock.name }}</option>
@@ -34,7 +34,7 @@
                         <div class="member_textarea ">
                             <div class="member_out_text ">
                                 <div>
-                                    <a>預測： </a>
+                                    <a>覺得： </a>
                                     <a href="/stock_info/0050" class="member_out_stock name ">0050－元大台灣50</a>
                                 </div>
                                 <div>
@@ -46,7 +46,7 @@
                             <div class="member_out_btn ">
                                 <div class="member_out_btn_error_text"></div>
 
-                                <button type="submit">送出預測</button>
+                                <button type="submit">送出討論</button>
                             </div>
                         </div>
                     </form>

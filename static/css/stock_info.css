@@ -576,7 +576,7 @@
 
 /* -----------data----------- */
 
-.stock_data_not_have {
+.data_not_have {
     padding: 3% 3% 0% 3%;
     margin: 0 auto;
     display: none;
@@ -587,7 +587,7 @@
     background-color: #b2b2b2;
 }
 
-.stock_data_not_have>img {
+.data_not_have>img {
     width: 290px;
 }
 

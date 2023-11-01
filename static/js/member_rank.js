@@ -47,7 +47,7 @@ function load_rank_rate_add(no, stock_id, stock_name, predict_win_rate, predict_
 
     let div_member_rank_box_win_text_total = document.createElement("div");
     div_member_rank_box_win_text_total.className = "member_rank_box_win_text total";
-    div_member_rank_box_win_text_total.textContent = "預測：" + predict_total + "次";
+    div_member_rank_box_win_text_total.textContent = "討論：" + predict_total + "次";
     div_member_rank_box_win_load.appendChild(div_member_rank_box_win_text_total)
 }
 

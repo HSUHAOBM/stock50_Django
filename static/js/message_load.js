@@ -101,7 +101,7 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
     div_message_box_loaddata.appendChild(div_message_box_predict);
 
     let a_message_box_predict_1 = document.createElement("a")
-    a_message_box_predict_1.textContent = "預測："
+    a_message_box_predict_1.textContent = "覺得："
     div_message_box_predict.appendChild(a_message_box_predict_1);
 
     let a_message_box_predict_2 = document.createElement("a")
@@ -286,15 +286,23 @@ function member_predict_load_message() {
         const user_name = getQueryParam('name');
         load_url = `/api/forum/?user_name=${user_name}&page=${forum_page}`;
     }
-
     console.log("load_url :" + load_url)
     fetch(load_url).then(function (response) {
         return response.json();
     }).then(function (result) {
-        if (result.length == 0) {
-            document.querySelector('.base_load_gif_forum').style.display = "none";
+        console.log(result)
+        console.log(result.length)
+        if (result.ok == false){
+            if (forum_page == 0) {
+                document.querySelector('.base_load_gif_forum').style.display = "none";
+                document.querySelector('.data_not_have').style.display = "flex";
 
-        } else {
+                return
+            }
+            document.querySelector('.base_load_gif_forum').style.display = "none";
+            return
+        }
+        if (result.length != 0) {
             for (let i = 0; i < result.length; i++) {
                 // stock
                 predict_stock = result[i].stock.code + "－" + result[i].stock.name
@@ -607,7 +615,7 @@ function check_input_reply(value, alt) {
 window.addEventListener('scroll', function () {
     let webwarp = document.querySelector('.warp');
     if (10 > (webwarp.scrollHeight - window.pageYOffset - window.innerHeight) & check_onload == true & forum_page != null) {
-        check_onload = false;
+        //c heck_onload = false;
         forum_page += 1;
         // document.getElementById("loadgif").style.display = "flex";
 

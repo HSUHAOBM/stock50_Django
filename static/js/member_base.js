@@ -24,10 +24,10 @@ function load_member_data() {
                 document.querySelector('.member_main_member_data_.introduction.text').textContent = result.self_intro;
                 document.querySelector('.member_main_member_data_.good.text').textContent = result.like_total_number + "個";
                 if (result.have_rank) {
-                    document.querySelector('.member_main_member_data_.rate.text1').textContent = "目前還沒有預測的資料";
+                    document.querySelector('.member_main_member_data_.rate.text1').textContent = "目前還沒有討論資料";
                 } else {
                     document.querySelector('.member_main_member_data_.rate.text1').textContent = "成功：" + result.rank_total_win + "次、失敗：" + result.rank_total_fail + "次";
-                    document.querySelector('.member_main_member_data_.rate.text2').textContent = "預測：" + result.rank_total_total + "次， 勝率 " + result.rank_total_rate + " % ";
+                    document.querySelector('.member_main_member_data_.rate.text2').textContent = "發佈：" + result.rank_total_total + "次， 勝率 " + result.rank_total_rate + " % ";
                 }
                 document.querySelector('.member_main_member_data').style.display = "flex";
                 document.querySelector('.base_load_gif_member_basedata').style.display = "none";
@@ -101,26 +101,28 @@ function load_member_data() {
 }
 const member_img_modify = document.querySelector('#image_uploads');
 member_img_modify.addEventListener('change', updata_avatar);
-
 // 會員大頭貼修改
 function updata_avatar() {
 
-    var member_data_img_form = new FormData();
+    let member_data_img_form = new FormData();
     member_data_img_form.append('member_img_modify', member_img_modify.files[0]);
-    // console.log(member_data_img_form)
 
-    fetch("/api/member_modify_imgsrc", {
+    let csrftoken = Cookies.get('csrftoken');
+
+    fetch("/api/User/member_profile_img/", {
         method: 'POST',
         body: member_data_img_form,
+        headers: {
+            'X-CSRFToken': csrftoken
+        }
     }).then(function(response) {
         return response.json();
     }).then(function(result) {
-
-        console.log(result)
+        console.log(result);
         if (result.ok) {
             window.location.reload();
         }
-    })
+    });
 }
 
 // 修改會員資料表單 讀取原本資料

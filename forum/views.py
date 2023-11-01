@@ -64,7 +64,7 @@ class MessageBoardViewSet(viewsets.ModelViewSet):
             return Response({"ok": False, "message": "本回次數已達上限，明日再試。"}, status=status.HTTP_401_UNAUTHORIZED)
 
         if user_trend_stock_count >= 1:
-            return Response({"ok": False, "message": f"{stock_instance.name}，本回已預測，明日再試。"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"ok": False, "message": f"{stock_instance.name}，本回已發佈，明日再試。"}, status=status.HTTP_401_UNAUTHORIZED)
 
         message = MessageBoard.objects.create(
             stock=stock_instance,
@@ -90,15 +90,20 @@ class MessageBoardViewSet(viewsets.ModelViewSet):
 
         # 指定用户
         if user_name:
-            # 如果提供了用户名，根据用户名过滤留言数据
             conditions["create_id__username"] = user_name
 
         # 指定股票
         if stock_id:
             conditions["stock__code"] = stock_id
+        # # 數量
+        # count = MessageBoard.objects.filter(**conditions).count()
+        # if count == 0:
+        #     return Response({"message": "No data available."}, status=status.HTTP_204_NO_CONTENT)
 
         # conditions = 空, 全取
         message_board = MessageBoard.objects.filter(**conditions).order_by('-create_date')[offset:offset + records_per_page]
+        if not message_board:
+            return Response({"ok":False, "message": "No data available."}, status=status.HTTP_200_OK)
         serializer = MessageBoardSerializer(message_board, many=True)
 
         # 登入者 // 並判斷有無按讚

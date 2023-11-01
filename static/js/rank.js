@@ -82,7 +82,7 @@ function member_predict_rank_api_load_rank_web(status) {
                         rank_text = "成功：" + result.data[i].predict_win + " 次"
                     }
                     if (status == "total") {
-                        rank_text = "預測：" + result.data[i].predict_total + " 次"
+                        rank_text = "討論：" + result.data[i].predict_total + " 次"
                     }
                     if (status == "like") {
                         rank_text = result.data[i].predict_good + " 個讚"

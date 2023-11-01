@@ -100,7 +100,7 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
     div_message_box_loaddata.appendChild(div_message_box_predict);
 
     let a_message_box_predict_1 = document.createElement("a")
-    a_message_box_predict_1.textContent = "預測："
+    a_message_box_predict_1.textContent = "討論："
     div_message_box_predict.appendChild(a_message_box_predict_1);
 
     let a_message_box_predict_2 = document.createElement("a")
