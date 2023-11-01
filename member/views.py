@@ -1,10 +1,11 @@
-from member.models import Profile
-from django.contrib.auth.models import User
+from member.models import Profile, PrivateMessage
+from django.contrib.auth.models import User, Group
+
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 
-from member.serializers import UserSerializer, ProfileSerializer
+from member.serializers import UserSerializer, ProfileSerializer, PrivateMessageSerializer
 from django.shortcuts import render
 
 from rest_framework import viewsets, status
@@ -251,6 +252,45 @@ class UserViewSet(viewsets.ModelViewSet):
                 return Response({"ok": False, "message": "更新失败"}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({"ok": False, "message": "請選擇圖片"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # 個人訊息傳送與讀取 /api/User/private_message/
+    @permission_classes([IsAuthenticated])
+    @action(detail=False, methods=['post','get'])
+    def private_message(self, request):
+        if request.method == 'GET':
+            name = request.query_params.get('name', None)
+            if request.user.username != name:
+                return Response({"Error":True}, status=status.HTTP_200_OK)
+
+            messages = PrivateMessage.objects.filter(receiver=request.user)
+            if not messages:  # 如果没有私信
+                return Response({"ok":False}, status=status.HTTP_200_OK)
+            serializer = PrivateMessageSerializer(messages, many=True)
+            return Response({"ok":True , "data":serializer.data}, status=status.HTTP_200_OK)
+
+        elif request.method == 'POST':
+            sender = request.user
+            receiver_name = request.data.get("receiver_name")
+            message_content = request.data.get("message")
+
+            if receiver_name == "administrators":
+                administrators_group = Group.objects.get(name="administrators")
+                administrators_users = administrators_group.user_set.all()
+                for admin_user in administrators_users:
+                    message = PrivateMessage(sender=sender, receiver=admin_user, message=message_content)
+                    message.save()
+
+                return Response({"ok": True, "message": "訊息成功"}, status=status.HTTP_200_OK)
+
+            try:
+                receiver = User.objects.get(username=receiver_name)
+            except User.DoesNotExist:
+                return Response({"ok": False, "message": "訊息發送失敗"}, status=status.HTTP_400_BAD_REQUEST)
+
+            message = PrivateMessage(sender=sender, receiver=receiver, message=message_content)
+            message.save()
+        return Response({"ok": True, "message": "訊息成功"}, status=status.HTTP_200_OK)
+
 
 @login_required
 def member_forum(request):

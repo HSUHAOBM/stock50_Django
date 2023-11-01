@@ -2,7 +2,6 @@ let url = location.href;
 url = url.split("name=")
 let memer_name = url[url.length - 1]
 let web_member_name = ""
-let web_member_id = ""
 
 // 會員頁
 function load_member_data() {
@@ -12,8 +11,7 @@ function load_member_data() {
         return res.json();
     }).then(function(result) {
         console.log(result)
-        web_member_name = result.name
-        web_member_id = result.id
+        web_member_name = result.username
 
         if (result.ok){
         //基本資料讀取
@@ -199,18 +197,23 @@ member_private_message_form.addEventListener('submit', function(event) {
     let member_private_message_form_data = {};
     event.preventDefault();
     member_private_message_form_data = {
-        "message_sent_text": member_private_message_form_.get("private_message_text"),
-        "message_sent": web_member_id
+        "message": member_private_message_form_.get("private_message_text"),
+        "receiver_name": web_member_name
     }
+
     if (member_private_message_form_.get("private_message_text").length > 100) {
         document.querySelector('.private_message_box_error_text').textContent = "字數大於100，超過規定。";
     }
 
-    fetch("/api/private_message_sent", {
+    let csrftoken = Cookies.get('csrftoken');
+
+    fetch("/api/User/private_message/", {
         method: "POST",
         body: JSON.stringify(member_private_message_form_data),
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+
         }
     }).then(function(res) {
         return res.json();
@@ -218,8 +221,7 @@ member_private_message_form.addEventListener('submit', function(event) {
         // console.log(result);
         if (result.ok) {
             window.location.reload();
-        }
-        if (result.error) {
+        }else{
             document.querySelector('.private_message_box_error_text').textContent = result.message;
         }
     })

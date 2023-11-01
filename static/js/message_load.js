@@ -290,8 +290,6 @@ function member_predict_load_message() {
     fetch(load_url).then(function (response) {
         return response.json();
     }).then(function (result) {
-        console.log(result)
-        console.log(result.length)
         if (result.ok == false){
             if (forum_page == 0) {
                 document.querySelector('.base_load_gif_forum').style.display = "none";

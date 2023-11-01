@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.settings import api_settings
-from member.models import Profile
+from member.models import Profile, PrivateMessage
 from django.contrib.auth.models import User
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -28,3 +28,11 @@ class UserBoardSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'email', 'avatar_url')
 
+
+class PrivateMessageSerializer(serializers.ModelSerializer):
+    sender = UserBoardSerializer()
+    create_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+
+    class Meta:
+        model = PrivateMessage
+        fields = '__all__'

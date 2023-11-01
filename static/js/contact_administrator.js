@@ -39,16 +39,20 @@ member_contact_message_form.addEventListener('submit', function(event) {
     event.preventDefault();
     member_contact_message_form_data = {
         "message_sent_text": member_contact_message_form_.get("contact_message_text"),
+        "receiver_name": "administrator"
     }
+
     if (member_contact_message_form_.get("contact_message_text").length > 500) {
         document.querySelector('.contact_message_box_error_text').textContent = "字數大於500，超過規定。";
     }
-    console.log("g")
-    fetch("/api/contact_message_sent", {
+    let csrftoken = Cookies.get('csrftoken');
+
+    fetch("/api/User/private_message/", {
         method: "POST",
         body: JSON.stringify(member_contact_message_form_data),
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
         }
     }).then(function(res) {
         return res.json();

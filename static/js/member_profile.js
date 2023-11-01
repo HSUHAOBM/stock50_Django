@@ -30,7 +30,7 @@ member_modify_data_form.addEventListener('submit', function(event) {
         "interests": member_modify_data_form_.get("member_modify_interests"),
         "introduction": member_modify_data_form_.get("member_modify_introduction")
     }
-    console.log(member_modify_form_data)
+
     if (member_modify_data_form_.get("member_modify_name").indexOf(" ") != -1) {
         document.querySelector('.member_modify_data_return_text').textContent = "請勿輸入空白字元"
     } else {
