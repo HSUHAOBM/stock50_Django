@@ -103,12 +103,9 @@ function member_private_message_load() {
         } else {
             document.querySelector('.data_not_message').style.display = "flex";
             document.querySelector('.base_load_gif_member_message').style.display = "none";
-
-
         }
         if(result.Error){
             location.href = '/'
-
         }
     })
 }
