@@ -1,5 +1,4 @@
-// 增加畫面
-let predic_data_not_have = 0
+
 
 function load_rank_rate_add(no, stock_id, stock_name, predict_win_rate, predict_win, predict_fail, predict_total, data_status) {
     let rate_div_member_rank_box = document.querySelector('.member_rank_box.' + data_status)
@@ -15,7 +14,7 @@ function load_rank_rate_add(no, stock_id, stock_name, predict_win_rate, predict_
     let div_member_rank_box_win_stock = document.createElement("div");
     div_member_rank_box_win_stock.className = "member_rank_box_win_stock";
     div_member_rank_box_win_stock.addEventListener('click', function() {
-        location.href = '/stock_info?stock_id=' + stock_id
+        location.href = '/stock_info/' + stock_id
     });
     div_member_rank_box_win_load.appendChild(div_member_rank_box_win_stock)
 
@@ -51,50 +50,74 @@ function load_rank_rate_add(no, stock_id, stock_name, predict_win_rate, predict_
     div_member_rank_box_win_load.appendChild(div_member_rank_box_win_text_total)
 }
 
+// 增加畫面
+let predic_data_not_have = 0
 // 讀取資料
-function member_predict_load_rank(data_status) {
-    fetch("/api/message_predict_rank?id=" + memer_id + "&data_status=" + data_status).then(function(response) {
+function member_predict_load_rank() {
+    fetch("score_statistics/?name=" + memer_name).then(function(response) {
         return response.json();
     }).then(function(result) {
-        if (result.data.member_no_data) {
-            document.querySelector('.data_not_have.' + data_status).style.display = "flex";
-            predic_data_not_have = predic_data_not_have + 1
-            if (memer_id == login_member_id) {
-                document.querySelector('.data_not_have_text_other').style.display = "flex";
-            }
-            if (predic_data_not_have == 3) {
-                document.querySelector('.data_not_have').style.display = "flex";
-                document.querySelector('.member_rank_win_title.rate').style.display = "none";
-                document.querySelector('.member_rank_win_title.win').style.display = "none";
-                document.querySelector('.member_rank_win_title.fail').style.display = "none";
-                document.querySelector('.data_not_have.rate').style.display = "none";
-                document.querySelector('.data_not_have.win').style.display = "none";
-                document.querySelector('.data_not_have.fail').style.display = "none";
 
-            }
-            document.querySelector('.base_load_gif_member_rank.' + data_status).style.display = "none";
+
+        const topSuccessfulMessages = result.top_successful_messages;
+        const topFailedMessages = result.top_failed_messages;
+        const topSuccessRate = result.top_success_rate;
+
+        console.log(topSuccessfulMessages)
+
+        rank_view_create(topSuccessfulMessages, "win")
+
+        rank_view_create(topFailedMessages, "fail")
+
+        rank_view_create(topSuccessRate, "rate")
+
+        if (predic_data_not_have == 3) {
+            document.querySelector('.data_not_have').style.display = "flex";
+            document.querySelector('.member_rank_win_title.rate').style.display = "none";
+            document.querySelector('.member_rank_win_title.win').style.display = "none";
+            document.querySelector('.member_rank_win_title.fail').style.display = "none";
+            document.querySelector('.data_not_have.rate').style.display = "none";
+            document.querySelector('.data_not_have.win').style.display = "none";
+            document.querySelector('.data_not_have.fail').style.display = "none";
         }
-
-        if (result.data[0].predict_load_rank) {
-            document.querySelector('.data_not_have').style.display = "none";
-
-            for (let i = 0; i < result.data.length; i++) {
-                stock_id = result.data[i].stock_id;
-                stock_name = result.data[i].stock_name;
-                predict_win_rate = result.data[i].predict_win_rate
-                predict_win = result.data[i].predict_win
-                predict_fail = result.data[i].predict_fail
-                predict_total = result.data[i].predict_total
-                // console.log(i, member_name, predict_win, predict_fail, predict_total, predict_win_rate)
-                load_rank_rate_add(i + 1, stock_id, stock_name, predict_win_rate, predict_win, predict_fail, predict_total, data_status)
-            }
-            document.querySelector('.base_load_gif_member_rank.' + data_status).style.display = "none";
-        }
+        console.log("predic_data_not_have",predic_data_not_have)
     })
 }
 
-function init() {
-    member_predict_load_rank("rate")
-    member_predict_load_rank("win")
-    member_predict_load_rank("fail")
+
+function rank_view_create(items,rank_type){
+    document.querySelector('.data_not_have').style.display = "none";
+    document.querySelector('.base_load_gif_member_rank.' + rank_type).style.display = "none";
+
+    let i = 0
+
+    // items.forEach(stock => {
+    for (const stock of items) {
+        stock_id = stock.stock__code
+        stock_name = stock.stock__name
+        predict_win_rate = stock.success_rate
+        predict_win = stock.successful_messages
+        predict_fail = stock.failed_messages
+        predict_total = stock.total_messages
+
+        if (rank_type === "win" && predict_win === 0) {
+            continue;
+        }
+        if (rank_type === "fail" && predict_fail === 0) {
+            continue;
+        }
+        if (rank_type === "rate" && predict_win_rate === 0) {
+            continue;
+        }
+        load_rank_rate_add(i + 1, stock_id, stock_name, predict_win_rate, predict_win, predict_fail, predict_total, rank_type)
+        i++;
+    };
+    if (i == 0) {
+        document.querySelector('.data_not_have.' + rank_type).style.display = "flex";
+        document.querySelector('.base_load_gif_member_rank.' + rank_type).style.display = "none";
+        predic_data_not_have = predic_data_not_have + 1
+    }
 }
+
+
+member_predict_load_rank()

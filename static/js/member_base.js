@@ -22,10 +22,10 @@ function load_member_data() {
                 document.querySelector('.member_main_member_data_.introduction.text').textContent = result.self_intro;
                 document.querySelector('.member_main_member_data_.good.text').textContent = result.like_total_number + "個";
                 if (result.have_rank) {
-                    document.querySelector('.member_main_member_data_.rate.text1').textContent = "目前還沒有討論資料";
-                } else {
                     document.querySelector('.member_main_member_data_.rate.text1').textContent = "成功：" + result.rank_total_win + "次、失敗：" + result.rank_total_fail + "次";
-                    document.querySelector('.member_main_member_data_.rate.text2').textContent = "發佈：" + result.rank_total_total + "次， 勝率 " + result.rank_total_rate + " % ";
+                    document.querySelector('.member_main_member_data_.rate.text2').textContent = "發佈：" + result.rank_total_total + "次， 勝率 " + result.rank_total_rate * 100 + " % ";
+                } else {
+                    document.querySelector('.member_main_member_data_.rate.text1').textContent = "目前還沒有討論資料";
                 }
                 document.querySelector('.member_main_member_data').style.display = "flex";
                 document.querySelector('.base_load_gif_member_basedata').style.display = "none";

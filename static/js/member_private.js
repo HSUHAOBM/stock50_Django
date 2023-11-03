@@ -88,9 +88,6 @@ function member_private_message_load() {
                 private_member_time = result.data[i].create_date;
                 private_member_about_time = timeAgo(result.data[i].create_date);
 
-                console.log(result.data[i].create_date)
-                console.log(private_member_name,private_member_about_time,private_member_text)
-
                 if (document.querySelector('.member_private_message_load.private' + private_member_name)) {
                     member_private_message_load_add_(private_member_name, private_member_text, private_member_time, private_member_about_time, "")
                 } else {

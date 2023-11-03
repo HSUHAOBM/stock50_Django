@@ -1,4 +1,4 @@
-function member_predict_add_rank_web(no, member_name, rank_text, member_src, status, member_id) {
+function member_predict_add_rank_web(no, member_name, rank_text, member_src, status) {
     let main_right_ranking = document.querySelector('.ranK_main_' + status)
 
     let div_rank_data_box = document.createElement("div");
@@ -13,13 +13,13 @@ function member_predict_add_rank_web(no, member_name, rank_text, member_src, sta
     let img_a_member_rank_box_win_stock_name = document.createElement("img");
     img_a_member_rank_box_win_stock_name.className = "member_rank_box_win_stock_name_img";
     if (no == 1) {
-        img_a_member_rank_box_win_stock_name.src = 'img/rank_first_.png';
+        img_a_member_rank_box_win_stock_name.src = '/static/img/rank_first_.png';
     }
     if (no == 2) {
-        img_a_member_rank_box_win_stock_name.src = 'img/rank_second_.png';
+        img_a_member_rank_box_win_stock_name.src = '/static/img/rank_second_.png';
     }
     if (no == 3) {
-        img_a_member_rank_box_win_stock_name.src = 'img/rank_third_.png';
+        img_a_member_rank_box_win_stock_name.src = '/static/img/rank_third_.png';
     }
     div_rank_no.appendChild(img_a_member_rank_box_win_stock_name)
 
@@ -31,7 +31,7 @@ function member_predict_add_rank_web(no, member_name, rank_text, member_src, sta
     div_rank_data_member_box.className = "div_rank_data_member_box";
     if (member_name != "從缺中") {
         div_rank_data_member_box.addEventListener('click', function() {
-            location.href = '//member_forum?name=' + member_id
+            location.href = '/member_forum?name=' + member_name
         });
     }
 
@@ -65,48 +65,51 @@ function member_predict_add_rank_web(no, member_name, rank_text, member_src, sta
 }
 
 function member_predict_rank_api_load_rank_web(status) {
-    fetch("/api/message_predict_rank?data_status=" + status).then(function(response) {
+    fetch("/score_statistics/").then(function(response) {
         return response.json();
     }).then(function(result) {
-        // console.log(result)
-        if (result.ok) {
-            for (let i = 0; i < 10; i++) {
-                if (result.data[i]) {
-                    member_id = result.data[i].member_id;
 
-                    member_name = result.data[i].member_name;
-                    if (status == "rate") {
-                        rank_text = "勝率：" + result.data[i].predict_win_rate + " %"
-                    }
-                    if (status == "win") {
-                        rank_text = "成功：" + result.data[i].predict_win + " 次"
-                    }
-                    if (status == "total") {
-                        rank_text = "討論：" + result.data[i].predict_total + " 次"
-                    }
-                    if (status == "like") {
-                        rank_text = result.data[i].predict_good + " 個讚"
-                    }
+        const top_success_rate = result.top_success_rate;
+        const top_total_messages = result.top_total_messages;
+        const top_like = result.top_like;
 
-                    member_src = result.data[i].member_src
-                } else {
-                    member_name = "從缺中"
-                    rank_text = ""
-                    member_src = 'img/unknown.png'
-                }
-                // console.log(i, member_name, predict_win, predict_fail, predict_total, predict_win_rate)
-                member_predict_add_rank_web(i + 1, member_name, rank_text, member_src, status, member_id)
-            }
-            document.querySelector('.base_load_gif_rank').style.display = "none";
-        }
-
+        rank_view_create(top_success_rate, "rate")
+        rank_view_create(top_like, "like")
+        rank_view_create(top_total_messages, "total")
 
     })
 
 }
 
-function init() {
-    member_predict_rank_api_load_rank_web("rate")
-    member_predict_rank_api_load_rank_web("like")
-    member_predict_rank_api_load_rank_web("total")
+function rank_view_create(items, rank_type){
+    let data_count = 0
+    for (const user of items) {
+        if (data_count >= 10){ return}
+
+        if (user)
+        {
+            member_name = user.username
+            member_src = user.user_img
+
+            if (rank_type == "rate") {
+                rank_text = "成功率：" + user.success_rate + " %"
+            }
+            if (rank_type == "total") {
+                rank_text = "討論：" + user.total_messages + " 次"
+            }
+            if (rank_type == "like") {
+                rank_text = user.likes_count  + " 個讚"
+            }
+        }else{
+            member_name = "從缺中"
+            rank_text = ""
+            member_src = '/static/img/unknown.png'
+        }
+        member_predict_add_rank_web(data_count + 1, member_name, rank_text, member_src, rank_type)
+        data_count++;
+    }
+
+    document.querySelector('.base_load_gif_rank').style.display = "none";
 }
+
+member_predict_rank_api_load_rank_web()

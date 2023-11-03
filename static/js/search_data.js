@@ -30,7 +30,7 @@ function search_stock_data_add(stock_id, stock_name) {
     let div_search_data_stock_data_load_box = document.createElement("div");
     div_search_data_stock_data_load_box.className = "serch_stock_result_name";
     div_search_data_stock_data_load_box.addEventListener('click', function() {
-        location.href = 'stock_info?stock_id=' + stock_id
+        location.href = 'stock_info/' + stock_id
     });
     search_data_stock_data_load_box.appendChild(div_search_data_stock_data_load_box)
 

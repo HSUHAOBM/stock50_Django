@@ -58,8 +58,8 @@ class MessageBoardViewSet(viewsets.ModelViewSet):
         user = request.user
 
         # 當回發布次數,總、個股
-        user_trend_total_count = MessageBoard.objects.filter(create_id=user,check_status=None).count()
-        user_trend_stock_count = MessageBoard.objects.filter(create_id=user, stock_id=stock_instance).count()
+        user_trend_total_count = MessageBoard.objects.filter(create_id=user, check_status=None).count()
+        user_trend_stock_count = MessageBoard.objects.filter(create_id=user, stock_id=stock_instance, check_status=None).count()
         if user_trend_total_count > 3:
             return Response({"ok": False, "message": "本回次數已達上限，明日再試。"}, status=status.HTTP_401_UNAUTHORIZED)
 

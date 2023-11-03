@@ -14,7 +14,7 @@ from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from django.db.models import Q
+from django.db.models import Q, Sum, Count
 from django.contrib.auth.decorators import login_required
 
 import os
@@ -127,7 +127,7 @@ class UserViewSet(viewsets.ModelViewSet):
             'is_superuser:':user.is_superuser
         }
         try:
-            # 在這裡獲取用戶的詳細資料
+            # 用戶的詳細資料
             profile = user.profile
             if profile.birthday:
                 user_data['birthday'] = profile.birthday.strftime('%Y-%m-%d')
@@ -149,14 +149,23 @@ class UserViewSet(viewsets.ModelViewSet):
             user_data['create_date'] = profile.create_date.strftime('%Y-%m-%d %H:%M:%S')
             user_data['write_date'] = profile.write_date
             user_data['type'] = profile.type
-            # 排行
-            # rank = user.rank
-            user_data['have_rank'] = False
-            user_data['rank_total_rate'] = "0"
-            user_data['rank_total_win'] = "0"
-            user_data['rank_total_fail'] = "0"
-            user_data['rank_total_total'] = "0"
-            user_data['like_total_number'] = "0"
+
+            # 用戶的排行統計https://www.youtube.com/watch?v=cH3_CVCdBAE ---
+            total_created_messages = user.created_messages.count()
+            successful_created_messages = user.created_messages.filter(check_status='1').count()
+            failed_created_messages = user.created_messages.filter(check_status='-1').count()
+            # 讚別人次數
+            total_likes_given = user.liked_messages.count()
+            # 被人讚次數
+            total_likes_received = user.created_messages.aggregate(total_likes=Count('likes')).get('total_likes', 0)
+            success_rate = 0.0 if total_created_messages == 0 else round(successful_created_messages / total_created_messages, 2)
+
+            user_data['have_rank'] = total_created_messages > 0
+            user_data['rank_total_rate'] = success_rate
+            user_data['rank_total_win'] = successful_created_messages
+            user_data['rank_total_fail'] = failed_created_messages
+            user_data['rank_total_total'] = total_created_messages
+            user_data['like_total_number'] = total_likes_received
 
         except Profile.DoesNotExist:
             pass

@@ -67,13 +67,16 @@
 
                 </form>
             </div>
+
         </div>
+        <script src="{% static 'js/member_base.js' %}"></script>
+        {% block additional_content  %}
+        {% endblock %}
+
     </div>
 </div>
 </div>
-<script src="{% static 'js/member_base.js' %}"></script>
-{% block additional_content  %}
-{% endblock %}
+
 </div>
 </div>
 {% endblock %}

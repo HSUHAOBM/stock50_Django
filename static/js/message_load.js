@@ -108,7 +108,7 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
     a_message_box_predict_2.textContent = predict_stock
     a_message_box_predict_2.className = "message_box_predict_stock"
     let stock_id = predict_stock.split("－")
-    a_message_box_predict_2.setAttribute("href", "stock_info/" + stock_id[0])
+    a_message_box_predict_2.setAttribute("href", "/stock_info/" + stock_id[0])
 
     div_message_box_predict.appendChild(a_message_box_predict_2);
 
@@ -286,7 +286,7 @@ function member_predict_load_message() {
         const user_name = getQueryParam('name');
         load_url = `/api/forum/?user_name=${user_name}&page=${forum_page}`;
     }
-    console.log("load_url :" + load_url)
+
     fetch(load_url).then(function (response) {
         return response.json();
     }).then(function (result) {
@@ -332,7 +332,7 @@ function member_predict_load_message() {
                 time_about = timeAgo(result[i].create_date)
 
                 message_mid = "mid_" + result[i].id
-                message_check_status = result[i].stock_status
+                message_check_status = result[i].check_status
 
                 member_predict_add_message(predict_message_member_id,
                     predict_stock, predict_trend, predict_message,
