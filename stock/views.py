@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAdminUser
 
 from django.http import HttpResponse, JsonResponse
 from django.utils.timezone import now
-from datetime import datetime
+from datetime import datetime, date
 import requests
 import json
 import time
@@ -21,7 +21,9 @@ from bs4 import BeautifulSoup
 import urllib.parse
 from django.contrib.auth.decorators import login_required
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+from forum.models import MessageBoard
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', filename='my_log.log')
 
 user_agents = [
         "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
@@ -52,7 +54,8 @@ class StockBoardViewSet(viewsets.ModelViewSet):
 
     lookup_field = 'code'
 
-    # /api/stock/get_all_info/
+    # 股票資訊
+    # /api/stock/get_all_info/?code={code}
     @action(detail=False, methods=['get'])
     def get_all_info(self, request):
         code = request.query_params.get('code', None)
@@ -64,12 +67,12 @@ class StockBoardViewSet(viewsets.ModelViewSet):
         stock_info = StockInfo.objects.filter(stock=stock).order_by('-date')
         serializer = StockInfoSerializer(stock_info, many=True)
 
-        stock_name = stock.name
         serialized_data = serializer.data
-        serialized_data['stock_name'] = stock_name
+
         return Response(serialized_data, status=status.HTTP_200_OK)
 
-    # /api/stock/get_last_info/
+    # 最新的一筆資料
+    # /api/stock/get_last_info/?code={code}
     @action(detail=False, methods=['get'])
     def get_last_info(self, request):
         code = request.query_params.get('code', None)
@@ -87,7 +90,8 @@ class StockBoardViewSet(viewsets.ModelViewSet):
 
         return Response(serialized_data, status=status.HTTP_200_OK)
 
-    # /api/stock/get_stock_news/
+    # 股票相關新聞爬取
+    # /api/stock/get_stock_news/{code}
     @action(detail=False, methods=['get'])
     def get_stock_news(self, request):
         stock_name = request.query_params.get('stock_name', '')
@@ -217,10 +221,21 @@ def get_stock_stopdeal(request):
 # 取得股票當日最新收盤
 @permission_classes([IsAdminUser])
 def get_stock_info(request, stock_id=None):
-    # request.environ['HTTP_HOST']
+
+    # 停止交易日 判斷
+    today = date.today()
+    try:
+        stop_deal_date = StockStopDealDate.objects.get(date=today)
+        reason = stop_deal_date.reason
+        logging.info(f"今日 {datetime.now().date() }停止交易日,{reason}")
+        response_data = {"ok": True}
+    except StockStopDealDate.DoesNotExist:
+        reason = "正常交易日"
+        logging.info(f"開始取得股票當日最新收盤 {datetime.now().date()} , {reason}")
+
     get_ok = True
     if stock_id :
-        get_stock_info_data(stock_id)
+        get_ok = get_stock_info_data(stock_id)
     else:
         stock_list = Stock.objects.all()
         for stock in stock_list:
@@ -237,7 +252,10 @@ def get_stock_info_data(stock_code):
     # 檢查是否重複
     existing_data = StockInfo.objects.filter(stock=stock_instance, date=datetime.now().date())
     if existing_data.exists():
+        logging.error(f" {stock_instance.name} {stock_instance.code} 資料已存在")
         return False
+
+    logging.info("%s - %s 資訊開始取得..." % (stock_instance.code, stock_instance.name))
 
     url = "https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=" + datetime.now().strftime('%Y%m%d') + "&stockNo=" + str(stock_code)
     headers = {"user-agent":random.choice(user_agents)}
@@ -250,8 +268,6 @@ def get_stock_info_data(stock_code):
         data = [stock_data["data"][-1]]
         for entry in data:
             try:
-                logging.info("%s - %s 資訊開始取得..." % (stock_instance.code, stock_instance.name))
-
                 # 日期判斷是否為今日
                 date_str = entry[0]
                 # 將民國年轉換為西元年
@@ -307,7 +323,7 @@ def get_stock_info_data(stock_code):
     time.sleep(1/2)
 
 
-
+# 網站爬蟲
 def get_news(stock_name):
     get_news_money_list = []
 
@@ -326,3 +342,27 @@ def get_news(stock_name):
             src = src.get('href')
         get_news_money_list.append({"date": date, "title": title, "src": src})
     return get_news_money_list
+
+
+def check_message():
+    # 停止交易日 判斷
+    today = date.today()
+    try:
+        stop_deal_date = StockStopDealDate.objects.get(date=today)
+        reason = stop_deal_date.reason
+        # logging.info(f"今日 {datetime.now().date() }停止交易日,{reason},留言檢核不作用")
+        # response_data = {"ok": True}
+        return False
+
+    except StockStopDealDate.DoesNotExist:
+        reason = "正常交易日"
+        logging.info(f"開始取得股票當日最新收盤 {datetime.now().date()} , {reason}")
+
+    # 檢核 check_status 為空的 留言
+    check_messages = MessageBoard.objects.filter(check_status=None)
+    for message in check_messages:
+        stock_instance = Stock.objects.filter(code=message.stock).first()
+        print(stock_instance.name)
+        pass
+    response_data = {"ok": True}
+    return JsonResponse(response_data)
