@@ -101,7 +101,7 @@ member_predict_data_form.addEventListener('submit', function(event) {
 let main_right_ranking = document.querySelector('.main_right_ranking')
 
 
-function member_predict_add_rank(no, member_name, predict_win, predict_fail, predict_total, predict_win_rate, member_src, member_id) {
+function member_predict_add_rank(no, member_name, predict_win, predict_fail, predict_total, predict_win_rate, member_src) {
     let div_main_right_ranking_stock_box = document.createElement("div");
     div_main_right_ranking_stock_box.className = "main_right_ranking_stock box";
     main_right_ranking.appendChild(div_main_right_ranking_stock_box)
@@ -118,7 +118,7 @@ function member_predict_add_rank(no, member_name, predict_win, predict_fail, pre
     let div_main_right_rank_box = document.createElement("div");
     div_main_right_rank_box.className = "div_main_right_rank_box";
     div_main_right_rank_box.addEventListener('click', function() {
-        location.href = '//member_forum?name=' + member_id
+        location.href = '/member_forum?name=' + member_name
     });
     div_main_right_ranking_stock_data.appendChild(div_main_right_rank_box)
 
@@ -192,22 +192,22 @@ function member_predict_add_rank(no, member_name, predict_win, predict_fail, pre
 
 // 取排行資訊
 function member_predict_rank_api_load() {
-    fetch("/api/message_predict_rank?data_status=rate").then(function(response) {
+    fetch("/score_statistics/").then(function(response) {
         return response.json();
     }).then(function(result) {
-        console.log(result)
-        if (result.ok) {
-            for (let i = 0; i < result.data.length; i++) {
 
-                member_id = result.data[i].member_id;
-                member_name = result.data[i].member_name;
-                predict_win = result.data[i].predict_win
-                predict_fail = result.data[i].predict_fail
-                predict_total = result.data[i].predict_total
-                predict_win_rate = result.data[i].predict_win_rate
-                member_src = result.data[i].member_src
-                    // console.log(i, member_name, predict_win, predict_fail, predict_total, predict_win_rate)
-                member_predict_add_rank(i + 1, member_name, predict_win, predict_fail, predict_total, predict_win_rate, member_src, member_id)
+        const top_success_rate = result.top_success_rate;
+
+        if (top_success_rate.length > 0) {
+            for (let i = 0; i < top_success_rate.length; i++) {
+
+                member_name = top_success_rate[i].username;
+                predict_win = top_success_rate[i].successful_messages;
+                predict_fail = top_success_rate[i].failed_messages;
+                predict_total = top_success_rate[i].total_messages;
+                predict_win_rate = top_success_rate[i].success_rate;
+                member_src = top_success_rate[i].user_img;
+                member_predict_add_rank(i + 1, member_name, predict_win, predict_fail, predict_total, predict_win_rate, member_src)
             }
         }
         document.querySelector('.base_load_gif_forum_rank').style.display = "none";
@@ -217,34 +217,29 @@ function member_predict_rank_api_load() {
 /*-------------rnak end----------------*/
 
 
-// 刪除討論預測
-function administrator_delete_predict(mid, member_user_id) {
-    let delete_predict = {
-        "message_id": mid,
-        "member_user_id": member_user_id
-    }
-    fetch("/api/message_predict_add", {
-            method: 'DELETE',
-            body: JSON.stringify(delete_predict),
-            headers: {
-                'Content-Type': 'application/json',
-                // 'X-CSRFToken': csrfToken,
-            }
-        })
-        .then(res => {
-            return res.json();
-        })
-        .then(result => {
-            console.log(result);
-            if (result.ok) {
-                window.location.href = window.location.href
-            }
-        });
-}
+// // 刪除討論預測
+// function administrator_delete_predict(mid, member_user_id) {
+//     let delete_predict = {
+//         "message_id": mid,
+//         "member_user_id": member_user_id
+//     }
+//     fetch("/api/message_predict_add", {
+//             method: 'DELETE',
+//             body: JSON.stringify(delete_predict),
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 // 'X-CSRFToken': csrfToken,
+//             }
+//         })
+//         .then(res => {
+//             return res.json();
+//         })
+//         .then(result => {
+//             console.log(result);
+//             if (result.ok) {
+//                 window.location.href = window.location.href
+//             }
+//         });
+// }
 
-function init() {
-    // member_predict_rank_api_load()
-}
-
-init()
-
+member_predict_rank_api_load()
