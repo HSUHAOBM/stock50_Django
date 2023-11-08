@@ -280,7 +280,7 @@ function member_predict_load_message() {
     if (window.location.pathname === '/forum') {
         load_url = `/api/forum/?page=${forum_page}`;
     } else if (window.location.pathname.startsWith('/stock_info/')) {
-        const stock_id = window.location.pathname.split('/stock_info/')[1];
+        const stock_id = window.location.pathname.split('/stock_info/')[1].split('/')[0];
         load_url = `/api/forum/?stock_id=${stock_id}&page=${forum_page}`;
     } else if (window.location.pathname === '/member_forum') {
         const user_name = getQueryParam('name');
@@ -622,11 +622,11 @@ window.addEventListener('scroll', function () {
 
     }
 })
-function init() {
+function init_message_load() {
 
     document.querySelector('.main_left_center').innerText = ""
     member_predict_load_message()
 
 }
 
-init()
+init_message_load()

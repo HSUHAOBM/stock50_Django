@@ -344,25 +344,30 @@ def get_news(stock_name):
     return get_news_money_list
 
 
-def check_message():
+def check_message(request):
     # 停止交易日 判斷
     today = date.today()
     try:
         stop_deal_date = StockStopDealDate.objects.get(date=today)
         reason = stop_deal_date.reason
-        # logging.info(f"今日 {datetime.now().date() }停止交易日,{reason},留言檢核不作用")
-        # response_data = {"ok": True}
+
         return False
 
     except StockStopDealDate.DoesNotExist:
         reason = "正常交易日"
-        logging.info(f"開始取得股票當日最新收盤 {datetime.now().date()} , {reason}")
+        logging.info(f"開始檢查用戶留言{datetime.now().date()} , {reason}")
 
     # 檢核 check_status 為空的 留言
     check_messages = MessageBoard.objects.filter(check_status=None)
     for message in check_messages:
-        stock_instance = Stock.objects.filter(code=message.stock).first()
-        print(stock_instance.name)
-        pass
+        stock_info = StockInfo.objects.filter(stock__code=message.stock.code).order_by('-date').first()
+
+        if stock_info:
+            if (stock_info.price_diff > 0 and message.stock_status == '1') or (stock_info.price_diff < 0 and message.stock_status == '-1') or (stock_info.price_diff == 0 and message.stock_status == '0'):
+                message.check_status = '1'
+            else:
+                message.check_status = '0'
+            message.save()
+
     response_data = {"ok": True}
     return JsonResponse(response_data)

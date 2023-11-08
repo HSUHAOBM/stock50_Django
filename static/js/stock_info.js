@@ -1,10 +1,9 @@
 let url = location.href;
-url = url.split("stock_info/")
-let stock_info_stock_id = url[url.length - 1]
+url = url.split("/")
+let stock_info_stock_id = url[url.length - 2]
 
 let div_member_main_member_databydb = document.querySelector('.member_main_member_databydb.predict')
 let web_stock_name = ""
-
 
 /*-----------------------------*/
 //stock_data
@@ -14,7 +13,7 @@ function stock_data_load() {
         if (response.status === 200) {
             return response.json();
         } else {
-            window.location.href = "/";
+            // window.location.href = "/";
         }
         }).then(function(result) {
 
@@ -105,8 +104,6 @@ function member_predict_load_message_stock_info(data_status) {
     fetch("/score_statistics/?stock=" + stock_info_stock_id).then(function(response) {
         return response.json();
     }).then(function(result) {
-        console.log(result)
-
         // document.querySelector('.data_not_have').style.display = "none";
         if (result){
             for (let i = 0; i < 5; i++) {
