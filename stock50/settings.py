@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'member',
     'stock',
     'forum',
+    'django_q'
 ]
 
 MIDDLEWARE = [
@@ -159,3 +160,14 @@ LOGIN_URL = '/member_sigin'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# django Q
+Q_CLUSTER = {
+'name': 'DjangORM',
+'workers': 1,
+'timeout': 1800,
+'retry': 1, # 重新嘗試次數
+'queue_limit': 50, # 最大序列數量
+'bulk': 10, # 每個工作進程一次處理10個任務
+'orm': 'default'
+}

@@ -20,6 +20,4 @@ urlpatterns = [
     # 頁面
     path('stock_info/<int:num>/', views.stock_info),
 
-
-    path('checktest/', views.check_message),
 ]
