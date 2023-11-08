@@ -38,8 +38,8 @@ member_contact_message_form.addEventListener('submit', function(event) {
     let member_contact_message_form_data = {};
     event.preventDefault();
     member_contact_message_form_data = {
-        "message_sent_text": member_contact_message_form_.get("contact_message_text"),
-        "receiver_name": "administrator"
+        "message": member_contact_message_form_.get("contact_message_text"),
+        "receiver_name": "administrators"
     }
 
     if (member_contact_message_form_.get("contact_message_text").length > 500) {
