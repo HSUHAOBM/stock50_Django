@@ -45,6 +45,7 @@ REST_FRAMEWORK = {
 # Application definition
 
 INSTALLED_APPS = [
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -58,7 +59,7 @@ INSTALLED_APPS = [
     'member',
     'stock',
     'forum',
-    'django_q'
+    'django_q',
 ]
 
 MIDDLEWARE = [
@@ -176,11 +177,18 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # django Q
 Q_CLUSTER = {
-'name': 'DjangORM',
-'workers': 1,
-'timeout': 1800,
-'retry': 1, # 重新嘗試次數
-'queue_limit': 50, # 最大序列數量
-'bulk': 10, # 每個工作進程一次處理10個任務
-'orm': 'default'
+    'name': 'DjangORM',
+    'workers': 2,
+    'timeout': 60,
+    'retry': 120,
+    'queue_limit': 50, # 最大序列數量
+    'bulk': 10, # 每個工作進程一次處理10個任務
+    'orm': 'default'
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'djangoq-localmem',
+    }
 }
