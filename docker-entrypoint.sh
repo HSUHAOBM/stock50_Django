@@ -8,5 +8,8 @@ python3 manage.py makemigrations stock
 
 python3 manage.py migrate
 
+cd  stock
+python tasks.py
+cd ..
 
 exec "$@"
