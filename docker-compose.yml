@@ -3,7 +3,7 @@ version: "3.9"
 services:
   db:
     image: postgres
-    container_name: django_postgres_db
+    container_name: django_stock50_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
