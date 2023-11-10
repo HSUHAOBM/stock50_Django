@@ -14,11 +14,11 @@ services:
     build: .
     container_name: django_stock50_web
     entrypoint: /app/docker-entrypoint.sh
-    command: python manage.py runserver 0.0.0.0:8080
+    command: python manage.py runserver 0.0.0.0:8088
     volumes:
       - .:/app
     ports:
-      - "8080:8080"
+      - "8088:8088"
     environment:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
