@@ -8,11 +8,31 @@ def get_stock_stopdeal():
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.common.by import By
 
-    options = Options()
-    options.chrome_executable_path="chromedriver"
+    # options = Options()
+    # options.chrome_executable_path="chromedriver"
+    # options.add_argument("--headless")  # 不顯示瀏覽器
+    # options.add_argument("--disable-gpu")  # 禁GPU加速
+    # driver = webdriver.Chrome(options=options)
+
+    from selenium.webdriver.chrome.service import Service
+    from webdriver_manager.chrome import ChromeDriverManager
+
+    # service = Service()
+    service = Service(executable_path=ChromeDriverManager().install())
+
+    options = webdriver.ChromeOptions()
     options.add_argument("--headless")  # 不顯示瀏覽器
     options.add_argument("--disable-gpu")  # 禁GPU加速
-    driver = webdriver.Chrome(options=options)
+    options.add_argument("--disable-extensions")
+    options.add_argument("--disable-infobars")
+    options.add_argument("--start-maximized")
+    options.add_argument("--disable-notifications")
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    driver = webdriver.Chrome(service=service, options=options)
+
+    print("Chrome version:", driver.capabilities['browserVersion'])
+    print("ChromeDriver version:", driver.capabilities['chrome']['chromedriverVersion'])
 
     driver.get('https://www.twse.com.tw/zh/trading/holiday.html')
     table = driver.find_element(By.CLASS_NAME, 'rwd-table')
@@ -51,6 +71,7 @@ def get_stock_stopdeal():
         return extracted_data
 
     formatted_data = extract_data(result_list)
+    driver.quit()
 
     for item in formatted_data:
         date_string, reason = item
@@ -58,8 +79,7 @@ def get_stock_stopdeal():
 
         if not StockStopDealDate.objects.filter(date=date_obj).exists():
             StockStopDealDate.objects.create(date=date_obj, reason=reason)
-
-    response_data = {"ok": "True"}
+    print("停止交易日數據新增完成")
 
 # 取得台灣50名單
 def get_stock50_list():
@@ -105,6 +125,8 @@ def get_stock50_list():
         "active_stocks": active_stock_data,
         "inactive_stocks": inactive_stock_data,
     }
+    print("台灣50名單 數據新增完成")
+
 
 
 def my_scheduled_task():
@@ -128,8 +150,6 @@ if __name__ == "__main__":
 
     django.setup()
 
-
-
     from stock.models import Stock, StockStopDealDate, StockInfo
     from forum.models import MessageBoard
 
@@ -141,10 +161,19 @@ if __name__ == "__main__":
     from django_q.tasks import schedule,async_task
     from django_q.models import Schedule
 
+    # 使用 async 執行任務 用法
     # async_task('stock.tasks.my_scheduled_task')
 
-    schedule('stock50.tasks.check_message', name="檢查留言排程", schedule_type=Schedule.CRON, cron = '00 14 * * 1-5')
-    schedule('stock50.tasks.get_stock_info', name="股市資料爬取", schedule_type=Schedule.CRON, cron = '50 13 * * 1-5')
+    tasks = {
+        "檢查留言排程": "00 14 * * 1-5",
+        "股市資料爬取": "50 13 * * 1-5",
+    }
 
+    for task_name, cron_schedule in tasks.items():
+        existing_task = Schedule.objects.filter(name=task_name).first()
+        if existing_task:
+            print(f"Task '{task_name}' already exists, skipping creation.")
+        else:
+            schedule(f'stock50.tasks.{task_name.replace(" ", "_").lower()}', name=task_name, schedule_type=Schedule.CRON, cron=cron_schedule)
     # 每分鐘
     # schedule('stock50.tasks.test_py', schedule_type=Schedule.CRON, cron = '* * * * 1-5')
