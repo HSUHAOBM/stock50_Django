@@ -170,12 +170,14 @@ if __name__ == "__main__":
     task_name_2 = "股市資料爬取"
 
     try:
-        schedule('stock50.tasks.check_message', name=task_name_1, next_run=arrow.utcnow().replace(hour=14, minute=0), schedule_type=Schedule.CRON, cron='00 14 * * 1-5')
+        next_run_time = arrow.utcnow().replace(hour=14, minute=0).format()
+        schedule('stock50.tasks.check_message', name=task_name_1, next_run=next_run_time, schedule_type=Schedule.CRON, cron='00 14 * * 1-5')
     except Schedule.DoesNotExist:
         print(f"任务 '{task_name_1}' 已存在,不需要重新建立")
 
     try:
-        schedule('stock50.tasks.get_stock_info', name=task_name_2, next_run=arrow.utcnow().replace(hour=13, minute=50), schedule_type=Schedule.CRON, cron='50 13 * * 1-5')
+        next_run_time = arrow.utcnow().replace(hour=13, minute=50).format()
+        schedule('stock50.tasks.get_stock_info', name=task_name_2, next_run=next_run_time, schedule_type=Schedule.CRON, cron='50 13 * * 1-5')
     except Schedule.DoesNotExist:
         print(f"任务 '{task_name_2}' 已存在,不需要重新建立")
 
