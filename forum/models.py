@@ -29,7 +29,7 @@ class MessageBoard(models.Model):
         db_table = 'message_board'
 
     def __str__(self):
-        return f"{self.create_id.name} - {self.text}"
+        return f"{self.create_id.username} - {self.text}"
 
 class MessageBoardLike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
