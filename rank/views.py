@@ -39,7 +39,7 @@ class RankView(APIView):
             ).annotate(
                 total_messages=Count('create_id'),
                 successful_messages=Count(Case(When(check_status='1', then=Value(1)), output_field=IntegerField())),
-                failed_messages=Count(Case(When(check_status='-1', then=Value(1)), output_field=IntegerField())),
+                failed_messages=Count(Case(When(check_status='0', then=Value(1)), output_field=IntegerField())),
                 success_rate=ExpressionWrapper(
                     # 整數
                     Cast(F('successful_messages') * 100.0 / F('total_messages'), IntegerField()),
@@ -62,7 +62,7 @@ class RankView(APIView):
             user_messages_stock= user_messages.values('stock__name', 'stock__code').annotate(
                 total_messages=Count('stock'),
                 successful_messages=Count(Case(When(check_status='1', then=Value(1)), output_field=IntegerField())),
-                failed_messages=Count(Case(When(check_status='-1', then=Value(1)), output_field=IntegerField())),
+                failed_messages=Count(Case(When(check_status='0', then=Value(1)), output_field=IntegerField())),
                 success_rate=ExpressionWrapper(
                     Cast(F('successful_messages') * 100.0 / F('total_messages'), IntegerField()),
                     output_field=IntegerField()
@@ -90,7 +90,7 @@ class RankView(APIView):
             ).annotate(
                 total_messages=Count('create_id'),
                 successful_messages=Count(Case(When(check_status='1', then=Value(1)), output_field=IntegerField())),
-                failed_messages=Count(Case(When(check_status='-1', then=Value(1)), output_field=IntegerField())),
+                failed_messages=Count(Case(When(check_status='0', then=Value(1)), output_field=IntegerField())),
                 success_rate=ExpressionWrapper(
                     # 整數
                     Cast(F('successful_messages') * 100.0 / F('total_messages'), IntegerField()),

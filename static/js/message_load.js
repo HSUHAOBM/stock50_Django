@@ -26,7 +26,7 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
     div_predict_message_box.appendChild(div_predict_message_box_result)
 
     let imgdiv_predict_message_box_result = document.createElement("img");
-    if (message_check_status == "0") {
+    if (message_check_status === null) {
         imgdiv_predict_message_box_result.src = ""
     }
     if (message_check_status == "1") {
@@ -34,7 +34,7 @@ function member_predict_add_message(predict_message_member_id, predict_stock, pr
         imgdiv_predict_message_box_result.src = "/static/img/index_success.png";
         imgdiv_predict_message_box_result.style.opacity = "0.55";
     }
-    if (message_check_status == "-1") {
+    if (message_check_status == "0") {
         imgdiv_predict_message_box_result.src = "/static/img/index_fail.png";
         imgdiv_predict_message_box_result.style.opacity = "0.55";
     }
