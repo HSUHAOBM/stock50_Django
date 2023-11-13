@@ -153,7 +153,7 @@ class UserViewSet(viewsets.ModelViewSet):
             # 用戶的排行統計https://www.youtube.com/watch?v=cH3_CVCdBAE ---
             total_created_messages = user.created_messages.count()
             successful_created_messages = user.created_messages.filter(check_status='1').count()
-            failed_created_messages = user.created_messages.filter(check_status='-1').count()
+            failed_created_messages = user.created_messages.filter(check_status='0').count()
             # 讚別人次數
             total_likes_given = user.liked_messages.count()
             # 被人讚次數
