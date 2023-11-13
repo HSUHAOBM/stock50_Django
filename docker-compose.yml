@@ -23,6 +23,7 @@ services:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - TZ=Asia/Taipei
     depends_on:
       - db
   django-q:
