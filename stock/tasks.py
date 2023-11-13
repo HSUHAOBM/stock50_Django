@@ -164,18 +164,20 @@ if __name__ == "__main__":
     # 使用 async 執行任務 用法
     # async_task('stock.tasks.my_scheduled_task')
 
+    import arrow
+
     task_name_1 = "檢查留言排程"
     task_name_2 = "股市資料爬取"
 
     try:
-        schedule('stock50.tasks.check_message', name=task_name_1, schedule_type=Schedule.CRON, cron='00 14 * * 1-5')
+        schedule('stock50.tasks.check_message', name=task_name_1, next_run=arrow.utcnow().replace(hour=14, minute=0), schedule_type=Schedule.CRON, cron='00 14 * * 1-5')
     except Schedule.DoesNotExist:
         print(f"任务 '{task_name_1}' 已存在,不需要重新建立")
 
     try:
-        schedule('stock50.tasks.get_stock_info', name=task_name_2, schedule_type=Schedule.CRON, cron='50 13 * * 1-5')
+        schedule('stock50.tasks.get_stock_info', name=task_name_2, next_run=arrow.utcnow().replace(hour=13, minute=50), schedule_type=Schedule.CRON, cron='50 13 * * 1-5')
     except Schedule.DoesNotExist:
         print(f"任务 '{task_name_2}' 已存在,不需要重新建立")
 
     # 每分鐘
-    schedule('stock50.tasks.test_py', schedule_type=Schedule.CRON, cron = '* * * * 1-5')
+    schedule('stock50.tasks.test_py', name="schedule測試", schedule_type=Schedule.CRON, cron = '* * * * 1-5')
