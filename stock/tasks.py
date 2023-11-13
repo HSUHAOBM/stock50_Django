@@ -165,18 +165,21 @@ if __name__ == "__main__":
     # async_task('stock.tasks.my_scheduled_task')
 
     import arrow
+    from pytz import timezone
 
     task_name_1 = "檢查留言排程"
     task_name_2 = "股市資料爬取"
 
+    local_tz = timezone('Asia/Taipei')
+
     try:
-        next_run_time = arrow.utcnow().replace(hour=14, minute=0).format()
+        next_run_time = arrow.utcnow().replace(hour=14, minute=0).to(local_tz).format()
         schedule('stock50.tasks.check_message', name=task_name_1, next_run=next_run_time, schedule_type=Schedule.CRON, cron='00 14 * * 1-5')
     except Schedule.DoesNotExist:
         print(f"任务 '{task_name_1}' 已存在,不需要重新建立")
 
     try:
-        next_run_time = arrow.utcnow().replace(hour=13, minute=50).format()
+        next_run_time = arrow.utcnow().replace(hour=13, minute=50).to(local_tz).format()
         schedule('stock50.tasks.get_stock_info', name=task_name_2, next_run=next_run_time, schedule_type=Schedule.CRON, cron='50 13 * * 1-5')
     except Schedule.DoesNotExist:
         print(f"任务 '{task_name_2}' 已存在,不需要重新建立")
