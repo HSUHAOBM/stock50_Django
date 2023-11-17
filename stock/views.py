@@ -21,7 +21,9 @@ from bs4 import BeautifulSoup
 import urllib.parse
 from django.contrib.auth.decorators import login_required
 
-from forum.models import MessageBoard
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', filename='my_log.log')
 
@@ -51,9 +53,19 @@ class StockStopDealDateBoardViewSet(viewsets.ModelViewSet):
 class StockBoardViewSet(viewsets.ModelViewSet):
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
-
+    # code 代替id 成唯一標籤
     lookup_field = 'code'
 
+
+    # @swagger_auto_schema(
+    #     operation_description="股票資訊",
+    #     manual_parameters=[
+    #         openapi.Parameter('code', openapi.IN_QUERY, description="Stock code", type=openapi.TYPE_STRING),
+    #     ],
+    #     operation_id='get_all_info',
+    #     operation_summary="GET /api/stock/get_all_info/?code={code}",
+    #     responses={200: 'OK'},
+    # )
     # 股票資訊
     # /api/stock/get_all_info/?code={code}
     @action(detail=False, methods=['get'])
