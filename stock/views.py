@@ -23,30 +23,33 @@ from django.contrib.auth.decorators import login_required
 
 from forum.models import MessageBoard
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', filename='my_log.log')
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s', filename='my_log.log')
 
 user_agents = [
-        "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
-        "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Acoo Browser; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; .NET CLR 3.0.04506)",
-        "Mozilla/4.0 (compatible; MSIE 7.0; AOL 9.5; AOLBuild 4337.35; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
-        "Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)",
-        "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET CLR 2.0.50727; Media Center PC 6.0)",
-        "Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET CLR 1.0.3705; .NET CLR 1.1.4322)",
-        "Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 5.2; .NET CLR 1.1.4322; .NET CLR 2.0.50727; InfoPath.2; .NET CLR 3.0.04506.30)",
-        "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN) AppleWebKit/523.15 (KHTML, like Gecko, Safari/419.3) Arora/0.3 (Change: 287 c9dfb30)",
-        "Mozilla/5.0 (X11; U; Linux; en-US) AppleWebKit/527+ (KHTML, like Gecko, Safari/419.3) Arora/0.6",
-        "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.2pre) Gecko/20070215 K-Ninja/2.1.1",
-        "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9) Gecko/20080705 Firefox/3.0 Kapiko/3.0",
-        "Mozilla/5.0 (X11; Linux i686; U;) Gecko/20070322 Kazehakase/0.4.5",
-        "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.8) Gecko Fedora/1.9.0.8-1.fc10 Kazehakase/0.5.6",
-        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11",
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20",
-        "Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; fr) Presto/2.9.168 Version/11.52",
-        "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Mobile Safari/537.36"]
+    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
+    "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Acoo Browser; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; .NET CLR 3.0.04506)",
+    "Mozilla/4.0 (compatible; MSIE 7.0; AOL 9.5; AOLBuild 4337.35; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
+    "Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)",
+    "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET CLR 2.0.50727; Media Center PC 6.0)",
+    "Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET CLR 1.0.3705; .NET CLR 1.1.4322)",
+    "Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 5.2; .NET CLR 1.1.4322; .NET CLR 2.0.50727; InfoPath.2; .NET CLR 3.0.04506.30)",
+    "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN) AppleWebKit/523.15 (KHTML, like Gecko, Safari/419.3) Arora/0.3 (Change: 287 c9dfb30)",
+    "Mozilla/5.0 (X11; U; Linux; en-US) AppleWebKit/527+ (KHTML, like Gecko, Safari/419.3) Arora/0.6",
+    "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.2pre) Gecko/20070215 K-Ninja/2.1.1",
+    "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9) Gecko/20080705 Firefox/3.0 Kapiko/3.0",
+    "Mozilla/5.0 (X11; Linux i686; U;) Gecko/20070322 Kazehakase/0.4.5",
+    "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.8) Gecko Fedora/1.9.0.8-1.fc10 Kazehakase/0.5.6",
+    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20",
+    "Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; fr) Presto/2.9.168 Version/11.52",
+    "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Mobile Safari/537.36"]
+
 
 class StockStopDealDateBoardViewSet(viewsets.ModelViewSet):
     queryset = StockStopDealDate.objects.all()
     serializer_class = StockStopDealDateSerializer
+
 
 class StockBoardViewSet(viewsets.ModelViewSet):
     queryset = Stock.objects.all()
@@ -81,7 +84,8 @@ class StockBoardViewSet(viewsets.ModelViewSet):
         if not stock:
             return Response({'detail': 'Stock not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        latest_stock_info = StockInfo.objects.filter(stock=stock).latest('date')
+        latest_stock_info = StockInfo.objects.filter(
+            stock=stock).latest('date')
         serializer = StockInfoSerializer(latest_stock_info)
 
         stock_name = stock.name
@@ -105,6 +109,8 @@ def stock_info(request, num):
     return render(request, 'stock/stock_info.html')
 
 # 取得台灣50名單
+
+
 @permission_classes([IsAdminUser])
 def get_stock50_list(request):
     # authorization_header = request.META.get("HTTP_TOKEN", "")
@@ -138,7 +144,8 @@ def get_stock50_list(request):
 
     stock_0050, _ = Stock.objects.get_or_create(
         code='0050',
-        defaults={'name': '元大台灣50', 'name_en':'Yuanta/P-shares Taiwan Top 50 ETF'}
+        defaults={'name': '元大台灣50',
+                  'name_en': 'Yuanta/P-shares Taiwan Top 50 ETF'}
     )
     if not stock_0050.active:
         stock_0050.active = True
@@ -147,8 +154,10 @@ def get_stock50_list(request):
     active_stocks = Stock.objects.filter(active=True)
     inactive_stocks = Stock.objects.filter(active=False)
 
-    active_stock_data = [{"code": stock.code, "name": stock.name} for stock in active_stocks]
-    inactive_stock_data = [{"code": stock.code, "name": stock.name} for stock in inactive_stocks]
+    active_stock_data = [{"code": stock.code, "name": stock.name}
+                         for stock in active_stocks]
+    inactive_stock_data = [{"code": stock.code, "name": stock.name}
+                           for stock in inactive_stocks]
 
     response_data = {
         "active_stocks": active_stock_data,
@@ -158,17 +167,34 @@ def get_stock50_list(request):
     return JsonResponse(response_data)
 
 # 取得當年股市停止交易的行事曆
+
+
 @permission_classes([IsAdminUser])
 def get_stock_stopdeal(request):
     from selenium import webdriver
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.common.by import By
 
-    options = Options()
-    options.chrome_executable_path="chromedriver"
+    from selenium.webdriver.chrome.service import Service
+    from webdriver_manager.chrome import ChromeDriverManager
+
+    # service = Service()
+    service = Service(executable_path=ChromeDriverManager().install())
+
+    options = webdriver.ChromeOptions()
     options.add_argument("--headless")  # 不顯示瀏覽器
     options.add_argument("--disable-gpu")  # 禁GPU加速
-    driver = webdriver.Chrome(options=options)
+    options.add_argument("--disable-extensions")
+    options.add_argument("--disable-infobars")
+    options.add_argument("--start-maximized")
+    options.add_argument("--disable-notifications")
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    driver = webdriver.Chrome(service=service, options=options)
+
+    print("Chrome version:", driver.capabilities['browserVersion'])
+    print("ChromeDriver version:",
+          driver.capabilities['chrome']['chromedriverVersion'])
 
     driver.get('https://www.twse.com.tw/zh/trading/holiday.html')
     table = driver.find_element(By.CLASS_NAME, 'rwd-table')
@@ -219,6 +245,8 @@ def get_stock_stopdeal(request):
     return JsonResponse(response_data)
 
 # 取得股票當日最新收盤
+
+
 @permission_classes([IsAdminUser])
 def get_stock_info(request, stock_id=None):
 
@@ -234,7 +262,7 @@ def get_stock_info(request, stock_id=None):
         logging.info(f"開始取得股票當日最新收盤 {datetime.now().date()} , {reason}")
 
     get_ok = True
-    if stock_id :
+    if stock_id:
         get_ok = get_stock_info_data(stock_id)
     else:
         stock_list = Stock.objects.all()
@@ -246,20 +274,25 @@ def get_stock_info(request, stock_id=None):
     return JsonResponse(response_data)
 
 # 功能_爬台灣證券網，延遲1s設定
+
+
 def get_stock_info_data(stock_code):
 
     stock_instance = Stock.objects.get(code=stock_code)
     # 檢查是否重複
-    existing_data = StockInfo.objects.filter(stock=stock_instance, date=datetime.now().date())
+    existing_data = StockInfo.objects.filter(
+        stock=stock_instance, date=datetime.now().date())
     if existing_data.exists():
         logging.error(f" {stock_instance.name} {stock_instance.code} 資料已存在")
         return False
 
-    logging.info("%s - %s 資訊開始取得..." % (stock_instance.code, stock_instance.name))
+    logging.info("%s - %s 資訊開始取得..." %
+                 (stock_instance.code, stock_instance.name))
 
-    url = "https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=" + datetime.now().strftime('%Y%m%d') + "&stockNo=" + str(stock_code)
-    headers = {"user-agent":random.choice(user_agents)}
-    res = requests.get(url, headers = headers)
+    url = "https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=" + \
+        datetime.now().strftime('%Y%m%d') + "&stockNo=" + str(stock_code)
+    headers = {"user-agent": random.choice(user_agents)}
+    res = requests.get(url, headers=headers)
 
     stock_data = json.loads(res.text)
 
@@ -274,8 +307,10 @@ def get_stock_info_data(stock_code):
                 roc_year = int(date_str.split('/')[0])
                 year = roc_year + 1911  # 轉換為西元年
 
-                date_str = f"{year}/{date_str.split('/')[1]}/{date_str.split('/')[2]}"  # 轉換為西元年的完整日期字串
-                date_today = datetime.strptime(date_str, '%Y/%m/%d').date()  # 將字串轉換為 datetime 物件
+                # 轉換為西元年的完整日期字串
+                date_str = f"{year}/{date_str.split('/')[1]}/{date_str.split('/')[2]}"
+                date_today = datetime.strptime(
+                    date_str, '%Y/%m/%d').date()  # 將字串轉換為 datetime 物件
 
                 if date_today != datetime.now().date():  # 比較日期
                     break
@@ -290,13 +325,15 @@ def get_stock_info_data(stock_code):
 
                 price_diff = entry[7].replace(",", "")  # 漲跌價差
 
-
                 if price_diff == "X0.00":
-                    last_stock_info = StockInfo.objects.filter(stock=stock_instance).latest('date')
-                    last_close_price = float(last_stock_info.close_price)  # 將 DecimalField 轉換為 float
+                    last_stock_info = StockInfo.objects.filter(
+                        stock=stock_instance).latest('date')
+                    # 將 DecimalField 轉換為 float
+                    last_close_price = float(last_stock_info.close_price)
                     price_diff = last_close_price - close_price
-                    dividend_remark = "除息日,除息金額：%s" % (last_close_price - open_price)
-                    logging.info(" %s 除息日處理" % (stock_instance.name) )
+                    dividend_remark = "除息日,除息金額：%s" % (
+                        last_close_price - open_price)
+                    logging.info(" %s 除息日處理" % (stock_instance.name))
                 else:
                     price_diff = float(entry[7])
                     dividend_remark = None
@@ -314,11 +351,13 @@ def get_stock_info_data(stock_code):
                     transaction_count=transaction_count,
                     remark=dividend_remark
                 )
-                logging.info("%s - %s 資訊取得成功儲存完畢" % (stock_instance.code, stock_instance.name))
+                logging.info("%s - %s 資訊取得成功儲存完畢" %
+                             (stock_instance.code, stock_instance.name))
                 return True
 
             except Exception as e:
-                logging.error("%s - %s 資訊取得錯誤：%s" % (stock_instance.code, stock_instance.name, str(e)))
+                logging.error("%s - %s 資訊取得錯誤：%s" %
+                              (stock_instance.code, stock_instance.name, str(e)))
                 return False
     time.sleep(1/2)
 
@@ -342,4 +381,3 @@ def get_news(stock_name):
             src = src.get('href')
         get_news_money_list.append({"date": date, "title": title, "src": src})
     return get_news_money_list
-
