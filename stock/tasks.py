@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     try:
         next_run_time = arrow.now().replace(hour=13, minute=50).format()
-        schedule('stock50.tasks.get_stock50_list', name=task_name_3,
+        schedule('stock50.tasks.get_stock50_list', name=task_name_1,
                  next_run=next_run_time, schedule_type=Schedule.CRON, cron='00 13 * * 1-5')
     except Schedule.DoesNotExist:
         print(f"任務 '{task_name_1}' 已存在,不需要重新建立")
@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     try:
         next_run_time = arrow.now().replace(hour=13, minute=50).format()
-        schedule('stock50.tasks.get_stock_stopdeal', name=task_name_3,
+        schedule('stock50.tasks.get_stock_stopdeal', name=task_name_4,
                  next_run=next_run_time, schedule_type=Schedule.CRON, cron='50 13 * * 1-5')
     except Schedule.DoesNotExist:
         print(f"任務 '{task_name_4}' 已存在,不需要重新建立")
