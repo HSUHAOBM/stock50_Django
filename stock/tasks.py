@@ -40,29 +40,45 @@ if __name__ == "__main__":
     task_name_3 = "股市資料爬取"
     task_name_4 = "股市休息日期"
 
-    # 任务1
-    if not Schedule.objects.filter(name=task_name_1).exists():
-        next_run_time = arrow.now().replace(hour=13, minute=50).format()
-        schedule('stock50.tasks.get_stock50_list', name=task_name_1,
-                 next_run=next_run_time, schedule_type=Schedule.CRON, cron='00 13 * * 1-5')
+    # 檢查台灣50名單
+    try:
+        schedule_task_1 = Schedule.objects.get(name=task_name_1)
+        schedule_task_1.next_run = arrow.now().replace(hour=13, minute=48).format()
+        schedule_task_1.cron = '48 13 * * 1-5'
+        schedule_task_1.save()
+    except Schedule.DoesNotExist:
+        schedule('stock50.tasks.get_stock50_list', name=task_name_1, repeats=1,
+                 next_run=arrow.now().replace(hour=13, minute=48).format(), schedule_type=Schedule.CRON, cron='48 13 * * 1-5')
 
-    # 任务2
-    if not Schedule.objects.filter(name=task_name_2).exists():
-        next_run_time = arrow.now().replace(hour=14, minute=0).format()
+    # 檢查留言排程
+    try:
+        schedule_task_2 = Schedule.objects.get(name=task_name_2)
+        schedule_task_2.next_run = arrow.now().replace(hour=14, minute=0).format()
+        schedule_task_2.cron = '00 14 * * 1-5'
+        schedule_task_2.save()
+    except Schedule.DoesNotExist:
         schedule('stock50.tasks.check_message', name=task_name_2,
-                 next_run=next_run_time, schedule_type=Schedule.CRON, cron='00 14 * * 1-5')
+                 next_run=arrow.now().replace(hour=14, minute=0).format(), schedule_type=Schedule.CRON, cron='00 14 * * 1-5')
 
-    # 任务3
-    if not Schedule.objects.filter(name=task_name_3).exists():
-        next_run_time = arrow.now().replace(hour=13, minute=50).format()
+    # 股市資料爬取
+    try:
+        schedule_task_3 = Schedule.objects.get(name=task_name_3)
+        schedule_task_3.next_run = arrow.now().replace(hour=13, minute=50).format()
+        schedule_task_3.cron = '50 13 * * 1-5'
+        schedule_task_3.save()
+    except Schedule.DoesNotExist:
         schedule('stock50.tasks.get_stock_info', name=task_name_3,
-                 next_run=next_run_time, schedule_type=Schedule.CRON, cron='0 0 1 1 *')
+                 next_run=arrow.now().replace(hour=13, minute=50).format(), schedule_type=Schedule.CRON, cron='50 13 * * 1-5')
 
-    # 任务4
-    if not Schedule.objects.filter(name=task_name_4).exists():
-        next_run_time = arrow.now().replace(hour=13, minute=50).format()
-        schedule('stock50.tasks.get_stock_stopdeal', name=task_name_4,
-                 next_run=next_run_time, schedule_type=Schedule.CRON, cron='50 13 * * 1-5')
+    # 股市休息日期
+    try:
+        schedule_task_4 = Schedule.objects.get(name=task_name_4)
+        schedule_task_4.next_run = arrow.now().replace(hour=13, minute=45).format()
+        schedule_task_4.cron = '01 00 1 1 *'
+        schedule_task_4.save()
+    except Schedule.DoesNotExist:
+        schedule('stock50.tasks.get_stock_stopdeal', name=task_name_4, repeats=1,
+                 next_run=arrow.now().replace(hour=1, minute=00).format(), schedule_type=Schedule.CRON, cron='01 00 1 1 *')
 
     # 每分鐘
     schedule('stock50.tasks.test_py', name="schedule測試",
