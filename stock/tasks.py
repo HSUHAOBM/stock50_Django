@@ -40,33 +40,29 @@ if __name__ == "__main__":
     task_name_3 = "股市資料爬取"
     task_name_4 = "股市休息日期"
 
-    try:
+    # 任务1
+    if not Schedule.objects.filter(name=task_name_1).exists():
         next_run_time = arrow.now().replace(hour=13, minute=50).format()
         schedule('stock50.tasks.get_stock50_list', name=task_name_1,
                  next_run=next_run_time, schedule_type=Schedule.CRON, cron='00 13 * * 1-5')
-    except Schedule.DoesNotExist:
-        print(f"任務 '{task_name_1}' 已存在,不需要重新建立")
 
-    try:
+    # 任务2
+    if not Schedule.objects.filter(name=task_name_2).exists():
         next_run_time = arrow.now().replace(hour=14, minute=0).format()
         schedule('stock50.tasks.check_message', name=task_name_2,
                  next_run=next_run_time, schedule_type=Schedule.CRON, cron='00 14 * * 1-5')
-    except Schedule.DoesNotExist:
-        print(f"任務 '{task_name_2}' 已存在,不需要重新建立")
 
-    try:
+    # 任务3
+    if not Schedule.objects.filter(name=task_name_3).exists():
         next_run_time = arrow.now().replace(hour=13, minute=50).format()
         schedule('stock50.tasks.get_stock_info', name=task_name_3,
                  next_run=next_run_time, schedule_type=Schedule.CRON, cron='0 0 1 1 *')
-    except Schedule.DoesNotExist:
-        print(f"任務 '{task_name_3}' 已存在,不需要重新建立")
 
-    try:
+    # 任务4
+    if not Schedule.objects.filter(name=task_name_4).exists():
         next_run_time = arrow.now().replace(hour=13, minute=50).format()
         schedule('stock50.tasks.get_stock_stopdeal', name=task_name_4,
                  next_run=next_run_time, schedule_type=Schedule.CRON, cron='50 13 * * 1-5')
-    except Schedule.DoesNotExist:
-        print(f"任務 '{task_name_4}' 已存在,不需要重新建立")
 
     # 每分鐘
     schedule('stock50.tasks.test_py', name="schedule測試",
