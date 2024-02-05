@@ -62,17 +62,20 @@ def check_message():
 
 # 取得股票當日最新收盤
 def get_stock_info(stock_id=None):
-
     # 停止交易日 判斷
     today = date.today()
     try:
         stop_deal_date = StockStopDealDate.objects.get(date=today)
         reason = stop_deal_date.reason
         logging.info(f"今日 {datetime.now().date() }停止交易日,{reason}")
+        print(f"今日 {datetime.now().date() }停止交易日,{reason}")
         response_data = {"ok": True}
+        return response_data
+
     except StockStopDealDate.DoesNotExist:
         reason = "正常交易日"
         logging.info(f"開始取得股票當日最新收盤 {datetime.now().date()} , {reason}")
+        print(f"開始取得股票當日最新收盤 {datetime.now().date()} , {reason}")
 
     get_ok = True
     if stock_id:
@@ -193,9 +196,12 @@ def get_stock_info_data(stock_code):
 
 
 def test_py():
-    print('=====================')
-    print(datetime.now())
-    print('=====================')
+    try:
+        print('=====================')
+        print(datetime.now())
+        print('=====================')
+    except Exception as e:
+        print(f'Error in test_py: {e}')
 
 
 # 取得當年股市停止交易的行事曆
@@ -252,6 +258,9 @@ def get_stock_stopdeal():
                 date_text = item[0]
                 description = item[1]
 
+                if "開始交易" in description or "最後交易" in description:
+                    continue
+
                 if not description:
                     description = last_description
 
@@ -272,11 +281,10 @@ def get_stock_stopdeal():
             StockStopDealDate.objects.create(date=date_obj, reason=reason)
     print("停止交易日數據新增完成")
 
+
 # 取得台灣50名單
-
-
-def get_stock50_list():
-
+def get_stock_name_list():
+    print('開始取得台灣50名單')
     url = 'https://www.yuantaetfs.com/api/Composition?fundid=1066'
     res = requests.get(url)
     stock50_data = json.loads(res.text)
@@ -317,8 +325,8 @@ def get_stock50_list():
     inactive_stock_data = [{"code": stock.code, "name": stock.name}
                            for stock in inactive_stocks]
 
-    response_data = {
-        "active_stocks": active_stock_data,
-        "inactive_stocks": inactive_stock_data,
-    }
+    # response_data = {
+    #     "active_stocks": active_stock_data,
+    #     "inactive_stocks": inactive_stock_data,
+    # }
     print("台灣50名單 數據新增完成")

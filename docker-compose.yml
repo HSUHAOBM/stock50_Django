@@ -4,6 +4,7 @@ services:
   db:
     image: postgres
     container_name: django_stock50_db
+    restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
@@ -13,6 +14,7 @@ services:
   web:
     build: .
     container_name: django_stock50_web
+    restart: always
     entrypoint: /app/docker-entrypoint.sh
     command: python manage.py runserver 0.0.0.0:8088
     volumes:
@@ -28,7 +30,11 @@ services:
       - db
   django-q:
     build: .
+    container_name: django_stock50_django_q
+    restart: always
     command: python manage.py qcluster
+    volumes:
+      - .:/app
 
 volumes:
   postgres_data:
