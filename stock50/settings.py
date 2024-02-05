@@ -183,8 +183,8 @@ Q_CLUSTER = {
     'workers': 2,
     'timeout': 60,
     'retry': 120,
-    'queue_limit': 50, # 最大序列數量
-    'bulk': 10, # 每個工作進程一次處理10個任務
+    'queue_limit': 50,  # 最大序列數量
+    'bulk': 10,  # 每個工作進程一次處理10個任務
     'orm': 'default'
 }
 
@@ -193,4 +193,59 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': 'djangoq-localmem',
     }
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'normal': {
+            'format': '[%(levelname)s] %(asctime)s | %(name)s: %(process)d - %(lineno)d | %(message)s'
+        },
+        'simple': {
+            'format': '[%(levelname)s] %(message)s'
+        },
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',  # Default logs to stderr
+            'formatter': 'normal',  # use the above "normal" formatter
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'my_log.log',
+            'formatter': 'normal'
+        },
+        'django_file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'django_file.log',
+        },
+    },
+    'loggers': {
+        # '': {  # means "root logger"
+        #     'handlers': ['console'],  # use the above "console" handler
+        #     'level': 'INFO',  # logging level
+        # },
+        # 'some_app.some_module': {
+        #     'handlers': ['console'],
+        #     'level': 'DEBUG',
+        #     'propagate': True,
+        # },
+        # 'django': {
+        #     'handlers': ['django_file'],
+        #     'level': 'DEBUG',
+        #     'propagate': True,
+        # },
+        '排程': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
 }

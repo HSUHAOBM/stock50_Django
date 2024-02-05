@@ -7,27 +7,9 @@ import requests
 import json
 import time
 import random
-
-# import logging
-# logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', filename='my_log.log')
-
 import logging
-from logging.handlers import RotatingFileHandler
 
-# 定義日誌格式
-log_format = '%(asctime)s - %(levelname)s - %(message)s'
-
-# 設定層級，使用相同的格式變數
-logging.basicConfig(level=logging.INFO, format=log_format)
-
-# 創建RotatingFileHandler，設定大小和備份數量
-log_handler = RotatingFileHandler(
-    'my_log.log', maxBytes=1024 * 1024, backupCount=3)
-log_handler.setLevel(logging.INFO)
-log_handler.setFormatter(logging.Formatter(log_format))
-
-# 添加處理程序
-logging.root.addHandler(log_handler)
+logger = logging.getLogger('排程')
 
 
 # 檢查留言
@@ -42,7 +24,7 @@ def check_message():
 
     except StockStopDealDate.DoesNotExist:
         reason = "正常交易日"
-        logging.info(f"開始檢查用戶留言, {datetime.now().date()} , {reason}")
+        logger.info(f"開始檢查用戶留言, {datetime.now().date()} , {reason}")
     try:
         # 檢核 check_status 為空的 留言
         check_messages = MessageBoard.objects.filter(check_status=None)
@@ -57,7 +39,7 @@ def check_message():
                     message.check_status = '0'
                 message.save()
     except Exception as e:
-        logging.error("留言檢查發生錯誤：%s" % (str(e)))
+        logger.error("留言檢查發生錯誤：%s" % (str(e)))
 
 
 # 取得股票當日最新收盤
@@ -67,14 +49,14 @@ def get_stock_info(stock_id=None):
     try:
         stop_deal_date = StockStopDealDate.objects.get(date=today)
         reason = stop_deal_date.reason
-        logging.info(f"今日 {datetime.now().date() }停止交易日,{reason}")
+        logger.info(f"今日 {datetime.now().date() }停止交易日,{reason}")
         print(f"今日 {datetime.now().date() }停止交易日,{reason}")
         response_data = {"ok": True}
         return response_data
 
     except StockStopDealDate.DoesNotExist:
         reason = "正常交易日"
-        logging.info(f"開始取得股票當日最新收盤 {datetime.now().date()} , {reason}")
+        logger.info(f"開始取得股票當日最新收盤 {datetime.now().date()} , {reason}")
         print(f"開始取得股票當日最新收盤 {datetime.now().date()} , {reason}")
 
     get_ok = True
@@ -116,11 +98,11 @@ def get_stock_info_data(stock_code):
     existing_data = StockInfo.objects.filter(
         stock=stock_instance, date=datetime.now().date())
     if existing_data.exists():
-        logging.error(f" {stock_instance.name} {stock_instance.code} 資料已存在")
+        logger.error(f" {stock_instance.name} {stock_instance.code} 資料已存在")
         return False
 
-    logging.info("%s - %s 資訊開始取得..." %
-                 (stock_instance.code, stock_instance.name))
+    logger.info("%s - %s 資訊開始取得..." %
+                (stock_instance.code, stock_instance.name))
 
     url = "https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=" + \
         datetime.now().strftime('%Y%m%d') + "&stockNo=" + str(stock_code)
@@ -166,7 +148,7 @@ def get_stock_info_data(stock_code):
                     price_diff = last_close_price - close_price
                     dividend_remark = "除息日,除息金額：%s" % (
                         last_close_price - open_price)
-                    logging.info(" %s 除息日處理" % (stock_instance.name))
+                    logger.info(" %s 除息日處理" % (stock_instance.name))
                 else:
                     price_diff = float(entry[7])
                     dividend_remark = None
@@ -184,13 +166,13 @@ def get_stock_info_data(stock_code):
                     transaction_count=transaction_count,
                     remark=dividend_remark
                 )
-                logging.info("%s - %s 資訊取得成功儲存完畢" %
-                             (stock_instance.code, stock_instance.name))
+                logger.info("%s - %s 資訊取得成功儲存完畢" %
+                            (stock_instance.code, stock_instance.name))
                 return True
 
             except Exception as e:
-                logging.error("%s - %s 資訊取得錯誤：%s" %
-                              (stock_instance.code, stock_instance.name, str(e)))
+                logger.error("%s - %s 資訊取得錯誤：%s" %
+                             (stock_instance.code, stock_instance.name, str(e)))
                 return False
     time.sleep(1/2)
 
@@ -280,9 +262,11 @@ def get_stock_stopdeal():
         if not StockStopDealDate.objects.filter(date=date_obj).exists():
             StockStopDealDate.objects.create(date=date_obj, reason=reason)
     print("停止交易日數據新增完成")
-
+    logger.info("停止交易日數據新增完成")
 
 # 取得台灣50名單
+
+
 def get_stock_name_list():
     print('開始取得台灣50名單')
     url = 'https://www.yuantaetfs.com/api/Composition?fundid=1066'
